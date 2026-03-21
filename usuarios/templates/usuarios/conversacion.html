@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ otro_usuario.username }} - Mensajes{% endblock %}
+
+{% block extra_styles %}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.conv-page {
+  height: calc(100vh - 60px);
+  display: flex; flex-direction: column;
+  max-width: 900px; margin: 0 auto; padding: 1rem;
+}
+
+/* HEADER */
+.conv-header {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px 16px 0 0; padding: 0.8rem 1.2rem;
+  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.conv-header-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(34,197,94,0.12); border: 2px solid rgba(34,197,94,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; overflow: hidden; padding: 0; flex-shrink: 0;
+  text-decoration: none;
+}
+.conv-header-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.conv-header-avatar.zombie { border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.12); }
+.conv-header-info { flex: 1; }
+.conv-header-name {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: #e5e7eb; display: flex; align-items: center; gap: 5px;
+  text-decoration: none;
+}
+.conv-header-name:hover { color: var(--green); }
+.conv-header-sub { font-size: 0.72rem; color: var(--muted); font-weight: 700; margin-top: 1px; }
+.back-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.78rem;
+  color: var(--muted); text-decoration: none; padding: 6px 12px;
+  border-radius: 8px; border: 1px solid var(--border); transition: all 0.15s; flex-shrink: 0;
+}
+.back-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.15); }
+
+/* MENSAJES BOX */
+.mensajes-box {
+  flex: 1;
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 1.2rem;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 6px;
+  background-image:
+    linear-gradient(rgba(34,197,94,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,197,94,0.02) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+.mensajes-box::-webkit-scrollbar { width: 4px; }
+.mensajes-box::-webkit-scrollbar-track { background: transparent; }
+.mensajes-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* MENSAJES */
+.msg-row {
+  display: flex; gap: 8px; align-items: flex-end;
+  max-width: 72%; margin-bottom: 2px;
+}
+.msg-row.sent { flex-direction: row-reverse; margin-left: auto; }
+.msg-row.received { margin-right: auto; }
+
+.msg-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; overflow: hidden; padding: 0;
+}
+.msg-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+.msg-content { display: flex; flex-direction: column; max-width: 100%; }
+.msg-row.sent .msg-content { align-items: flex-end; }
+.msg-row.received .msg-content { align-items: flex-start; }
+
+.msg-bubble {
+  padding: 9px 14px; border-radius: 14px;
+  font-size: 0.9rem; line-height: 1.55;
+  word-wrap: break-word; overflow-wrap: break-word;
+  word-break: break-word; white-space: pre-wrap;
+  max-width: 100%;
+}
+.msg-row.received .msg-bubble {
+  background: rgba(255,255,255,0.07); color: #e5e7eb;
+  border-radius: 4px 14px 14px 14px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.msg-row.sent .msg-bubble {
+  background: rgba(34,197,94,0.18); color: #e5e7eb;
+  border: 1px solid rgba(34,197,94,0.25);
+  border-radius: 14px 4px 14px 14px;
+}
+.msg-time {
+  font-size: 0.62rem; color: var(--muted); font-weight: 700; margin-top: 3px;
+  padding: 0 4px;
+}
+
+/* FECHA SEPARADOR */
+.msg-date-sep {
+  text-align: center; margin: 0.8rem 0;
+  font-size: 0.68rem; color: var(--muted); font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.msg-date-sep span {
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  padding: 3px 12px; border-radius: 20px;
+}
+
+/* EMPTY */
+.empty-msgs {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--muted); gap: 8px;
+}
+.empty-msgs-icon { font-size: 3rem; opacity: 0.4; }
+.empty-msgs-text { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #e5e7eb; }
+.empty-msgs-sub { font-size: 0.82rem; color: var(--muted); }
+
+/* INPUT */
+.msg-form {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 0 0 16px 16px; padding: 0.8rem 1rem;
+  flex-shrink: 0;
+}
+.msg-input-row { display: flex; gap: 8px; align-items: flex-end; }
+.msg-textarea {
+  flex: 1; padding: 10px 14px; border-radius: 12px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  color: #e5e7eb; font-family: 'Nunito', sans-serif; font-size: 0.92rem;
+  outline: none; resize: none; min-height: 44px; max-height: 120px;
+  line-height: 1.5; transition: border-color 0.2s;
+}
+.msg-textarea:focus { border-color: rgba(34,197,94,0.3); }
+.msg-textarea::placeholder { color: var(--muted); }
+.msg-send {
+  padding: 10px 20px; border-radius: 12px; height: 44px;
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem; letter-spacing: 0.5px;
+  background: var(--green); border: none; color: #fff; cursor: pointer;
+  box-shadow: 0 4px 12px var(--green-glow); transition: all 0.2s;
+  flex-shrink: 0; white-space: nowrap;
+}
+.msg-send:hover { background: var(--green-dark); transform: translateY(-1px); }
+{% endblock %}
+
+{% block content %}
+<div class="conv-page">
+
+  <div class="conv-header">
+    <a href="/usuarios/perfil/{{ otro_usuario.username }}/"
+      class="conv-header-avatar {% if otro_usuario.perfil.faccion == 'zombie' %}zombie{% endif %}">
+      {% if otro_usuario.perfil.avatar %}
+      <img src="{{ otro_usuario.perfil.avatar.url }}" alt="{{ otro_usuario.username }}">
+      {% elif otro_usuario.perfil.faccion == 'planta' %}🌱
+      {% elif otro_usuario.perfil.faccion == 'zombie' %}🧟
+      {% else %}⚔️{% endif %}
+    </a>
+    <div class="conv-header-info">
+      <a href="/usuarios/perfil/{{ otro_usuario.username }}/" class="conv-header-name">
+        {{ otro_usuario.username }}
+        {% if otro_usuario.is_staff %}
+        <span style="display:inline-flex;vertical-align:middle;">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/>
+            <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/>
+          </svg>
+        </span>
+        {% elif otro_usuario.perfil.verificado %}
+        <span style="display:inline-flex;vertical-align:middle;">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/>
+            <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/>
+          </svg>
+        </span>
+        {% endif %}
+      </a>
+      <div class="conv-header-sub">{{ otro_usuario.perfil.get_rango_display }}</div>
+    </div>
+    <a href="/usuarios/mensajes/" class="back-btn">← Volver</a>
+  </div>
+
+  <div class="mensajes-box" id="mensajes-box">
+    {% if mensajes %}
+      {% for msg in mensajes %}
+      <div class="msg-row {% if msg.remitente == request.user %}sent{% else %}received{% endif %}">
+        <div class="msg-avatar">
+          {% if msg.remitente.perfil.avatar %}
+          <img src="{{ msg.remitente.perfil.avatar.url }}" alt="{{ msg.remitente.username }}">
+          {% elif msg.remitente.perfil.faccion == 'planta' %}🌱
+          {% elif msg.remitente.perfil.faccion == 'zombie' %}🧟
+          {% else %}⚔️{% endif %}
+        </div>
+        <div class="msg-content">
+          <div class="msg-bubble">{{ msg.contenido }}</div>
+          <div class="msg-time">{{ msg.fecha|date:"d/m H:i" }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="empty-msgs">
+      <span class="empty-msgs-icon">💬</span>
+      <div class="empty-msgs-text">Sin mensajes aún</div>
+      <div class="empty-msgs-sub">¡Sé el primero en escribir!</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="msg-form">
+    <form method="POST" id="msg-form">
+      {% csrf_token %}
+      <div class="msg-input-row">
+        <textarea name="contenido" class="msg-textarea" id="msg-input"
+          placeholder="Escribe un mensaje..."
+          maxlength="1000" required rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMensaje();}"></textarea>
+        <button type="button" onclick="enviarMensaje()" class="msg-send">📨 Enviar</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const box = document.getElementById('mensajes-box');
+  if (box) box.scrollTop = box.scrollHeight;
+
+  let ultimoId = {{ mensajes.last.id|default:0 }};
+
+  function agregarMensaje(msg) {
+    const row = document.createElement('div');
+    row.className = `msg-row ${msg.soy_yo ? 'sent' : 'received'}`;
+    row.innerHTML = `
+      <div class="msg-avatar">${msg.avatar_emoji}</div>
+      <div class="msg-content">
+        <div class="msg-bubble">${msg.contenido}</div>
+        <div class="msg-time">${msg.fecha}</div>
+      </div>
+    `;
+    box.appendChild(row);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function enviarMensaje() {
+    const input = document.getElementById('msg-input');
+    const contenido = input.value.trim();
+    if (!contenido) return;
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch(window.location.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrf,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: `contenido=${encodeURIComponent(contenido)}&csrfmiddlewaretoken=${csrf}`
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.ok) {
+        agregarMensaje({
+          soy_yo: true,
+          contenido: contenido,
+          fecha: data.fecha,
+          avatar_emoji: data.mi_avatar
+        });
+        ultimoId = data.id;
+        input.value = '';
+      }
+    }).catch(() => {
+      document.getElementById('msg-form').submit();
+    });
+  }
+
+  function checkNuevosMensajes() {
+    fetch(`/usuarios/mensajes/{{ otro_usuario.username }}/nuevos/?ultimo=${ultimoId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.mensajes && data.mensajes.length > 0) {
+          data.mensajes.forEach(msg => agregarMensaje(msg));
+          ultimoId = data.mensajes[data.mensajes.length - 1].id;
+        }
+      }).catch(() => {});
+  }
+
+  setInterval(checkNuevosMensajes, 3000);
+</script>
+{% endblock %}

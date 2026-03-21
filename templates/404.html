@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Página no encontrada - Garden Warfare{% endblock %}
+
+{% block extra_styles %}
+  .error-container {
+    min-height: 80vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 2rem;
+  }
+  .error-num {
+    font-family: 'Bangers', cursive; font-size: clamp(6rem, 20vw, 12rem);
+    letter-spacing: 8px; color: #fff;
+    text-shadow: 6px 6px 0 #1a3d1a, 0 0 80px rgba(76,175,80,0.3);
+    line-height: 1; margin-bottom: 0.5rem;
+    animation: fadeDown 0.6s ease both;
+  }
+  .error-num span { color: #fbbf24; }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  .error-icon { font-size: 4rem; margin-bottom: 1rem; animation: wobble 2s ease-in-out infinite; }
+  @keyframes wobble { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+  .error-title { font-family: 'Bangers', cursive; font-size: clamp(1.5rem, 4vw, 2.5rem); letter-spacing: 2px; color: #4CAF50; margin-bottom: 0.8rem; }
+  .error-desc { font-size: 1rem; color: #6b7280; max-width: 400px; line-height: 1.6; margin-bottom: 2rem; }
+  .error-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .btn { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1.5px; padding: 10px 24px; border-radius: 8px; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-green { background: #4CAF50; color: #fff; box-shadow: 0 4px 20px rgba(76,175,80,0.3); }
+  .btn-green:hover { box-shadow: 0 6px 28px rgba(76,175,80,0.5); }
+  .btn-outline { background: transparent; color: #81c784; border: 1.5px solid rgba(76,175,80,0.4); }
+  .btn-outline:hover { background: rgba(76,175,80,0.1); border-color: #4CAF50; }
+{% endblock %}
+
+{% block content %}
+  <div class="error-container">
+    <div class="error-icon">🌱</div>
+    <div class="error-num">4<span>0</span>4</div>
+    <div class="error-title">¡Página no encontrada!</div>
+    <p class="error-desc">Parece que esta página fue devorada por un Chomper. No te preocupes, puedes volver al campo de batalla.</p>
+    <div class="error-btns">
+      <a href="/" class="btn btn-green">← Volver al inicio</a>
+      <a href="/personajes/" class="btn btn-outline">Ver personajes</a>
+    </div>
+  </div>
+{% endblock %}

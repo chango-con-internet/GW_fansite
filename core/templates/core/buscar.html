@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+
+{% block title %}Buscar - Garden Warfare{% endblock %}
+
+{% block extra_styles %}
+.buscar-wrap {
+  max-width: 900px; margin: 0 auto; padding: 2rem 1rem;
+}
+
+.buscar-hero {
+  text-align: center; padding: 2rem 0 2.5rem; position: relative;
+}
+.buscar-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(34,197,94,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.buscar-title {
+  font-family: 'Fredoka One', cursive; font-size: 2rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 1.5rem;
+  position: relative; z-index: 1;
+}
+.buscar-title span { color: var(--green); }
+
+.buscar-form {
+  display: flex; gap: 8px; max-width: 600px; margin: 0 auto;
+  position: relative; z-index: 1;
+}
+.buscar-input {
+  flex: 1; padding: 12px 18px; border-radius: 12px;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: #e5e7eb; font-family: 'Nunito', sans-serif; font-size: 0.95rem;
+  outline: none; transition: all 0.2s;
+}
+.buscar-input:focus {
+  border-color: rgba(34,197,94,0.4);
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.08);
+}
+.buscar-input::placeholder { color: var(--muted); }
+.buscar-btn {
+  padding: 12px 20px; border-radius: 12px;
+  font-family: 'Fredoka One', cursive; font-size: 0.95rem; letter-spacing: 0.5px;
+  background: var(--green); border: none; color: #fff; cursor: pointer;
+  box-shadow: 0 4px 15px var(--green-glow); transition: all 0.2s;
+}
+.buscar-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+.buscar-meta {
+  text-align: center; margin: 1rem 0 2rem;
+  font-size: 0.82rem; color: var(--muted); font-weight: 700;
+}
+.buscar-meta span { color: var(--green); }
+
+/* TABS */
+.result-tabs {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 4px;
+}
+.result-tab {
+  flex: 1; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem; letter-spacing: 0.5px;
+  background: transparent; border: none; color: var(--muted);
+  transition: all 0.15s; text-align: center;
+}
+.result-tab:hover { color: #e5e7eb; }
+.result-tab.active { background: rgba(34,197,94,0.15); color: var(--green); }
+
+/* SECCIÓN */
+.result-section { margin-bottom: 2rem; }
+.section-title {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-count {
+  font-size: 0.7rem; background: rgba(34,197,94,0.15);
+  color: var(--green); padding: 2px 10px; border-radius: 20px; font-weight: 800;
+}
+
+/* POST RESULT */
+.post-result {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 0.7rem;
+  text-decoration: none; display: block; color: inherit; transition: all 0.2s;
+}
+.post-result:hover { background: #111911; border-color: rgba(34,197,94,0.2); }
+.post-result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 0.4rem; }
+.post-result-title {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: #e5e7eb; letter-spacing: 0.5px;
+}
+.post-result-meta { font-size: 0.72rem; color: var(--muted); font-weight: 700; }
+.post-result-content {
+  font-size: 0.82rem; color: #6b7280; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.result-badge {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 6px;
+}
+.badge-post { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-personaje { background: rgba(59,130,246,0.12); color: #93c5fd; }
+.badge-guia { background: rgba(251,191,36,0.12); color: #fde68a; }
+
+/* PERSONAJE RESULT */
+.personaje-result {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 0.7rem;
+  text-decoration: none; display: flex; align-items: center; gap: 12px;
+  color: inherit; transition: all 0.2s;
+}
+.personaje-result:hover { background: #111911; border-color: rgba(34,197,94,0.2); }
+.personaje-img {
+  width: 50px; height: 50px; border-radius: 10px; flex-shrink: 0;
+  object-fit: cover; border: 1px solid var(--border);
+}
+.personaje-placeholder {
+  width: 50px; height: 50px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+}
+.personaje-info { flex: 1; }
+.personaje-name {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: #e5e7eb; margin-bottom: 3px;
+}
+.personaje-meta { font-size: 0.72rem; color: var(--muted); font-weight: 700; }
+
+/* GUIA RESULT */
+.guia-result {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 0.7rem;
+  text-decoration: none; display: block; color: inherit; transition: all 0.2s;
+}
+.guia-result:hover { background: #111911; border-color: rgba(251,191,36,0.2); }
+.guia-result-title {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: #e5e7eb; margin-bottom: 4px; letter-spacing: 0.5px;
+}
+.guia-result-desc {
+  font-size: 0.82rem; color: #6b7280; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* EMPTY */
+.no-results {
+  text-align: center; padding: 4rem 2rem;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
+}
+.no-results-icon { font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.5; }
+.no-results-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+  color: #e5e7eb; margin-bottom: 0.5rem;
+}
+.no-results-sub { font-size: 0.85rem; color: var(--muted); }
+
+.empty-section {
+  text-align: center; padding: 1.5rem;
+  background: rgba(255,255,255,0.02); border-radius: 12px;
+  border: 1px solid var(--border); color: var(--muted);
+  font-size: 0.82rem; font-weight: 700; margin-bottom: 0.7rem;
+}
+{% endblock %}
+
+{% block content %}
+<div class="buscar-wrap">
+
+  <div class="buscar-hero">
+    <div class="buscar-title">🔍 Buscar en <span>GW Fan</span></div>
+    <form method="GET" action="/buscar/" class="buscar-form">
+      <input type="text" name="q" class="buscar-input"
+        placeholder="Buscar posts, personajes, guías..."
+        value="{{ query }}" autofocus>
+      <button type="submit" class="buscar-btn">🔍 Buscar</button>
+    </form>
+  </div>
+
+  {% if query %}
+  <div class="buscar-meta">
+    {% if total > 0 %}
+    Se encontraron <span>{{ total }} resultados</span> para "<span>{{ query }}</span>"
+    {% else %}
+    No se encontraron resultados para "<span>{{ query }}</span>"
+    {% endif %}
+  </div>
+
+  {% if total > 0 %}
+
+  <!-- POSTS -->
+  {% if resultados_posts %}
+  <div class="result-section">
+    <div class="section-title">
+      📝 Posts
+      <span class="section-count">{{ resultados_posts|length }}</span>
+    </div>
+    {% for post in resultados_posts %}
+    <a href="/foro/post/{{ post.pk }}/" class="post-result">
+      <div class="post-result-header">
+        <span class="result-badge badge-post">Post</span>
+        <span class="result-badge badge-{{ post.categoria }}">{{ post.get_categoria_display }}</span>
+      </div>
+      <div class="post-result-title">{{ post.titulo }}</div>
+      <div class="post-result-meta">por {{ post.autor.username }} • {{ post.fecha|timesince }} ago • ❤️ {{ post.total_likes }}</div>
+      <div class="post-result-content">{{ post.contenido }}</div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- PERSONAJES -->
+  {% if resultados_personajes %}
+  <div class="result-section">
+    <div class="section-title">
+      🌱 Personajes
+      <span class="section-count">{{ resultados_personajes|length }}</span>
+    </div>
+    {% for p in resultados_personajes %}
+    <a href="/personajes/{{ p.pk }}/" class="personaje-result">
+      {% if p.imagen %}
+      <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" class="personaje-img">
+      {% else %}
+      <div class="personaje-placeholder">
+        {% if p.faccion == 'planta' %}🌱{% else %}🧟{% endif %}
+      </div>
+      {% endif %}
+      <div class="personaje-info">
+        <div class="personaje-name">{{ p.nombre }}</div>
+        <div class="personaje-meta">
+          <span class="result-badge badge-personaje">Personaje</span>
+          {{ p.get_faccion_display }} • {{ p.get_rol_display }} • {{ p.get_juego_display }}
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- GUÍAS -->
+  {% if resultados_guias %}
+  <div class="result-section">
+    <div class="section-title">
+      📖 Guías
+      <span class="section-count">{{ resultados_guias|length }}</span>
+    </div>
+    {% for g in resultados_guias %}
+    <a href="/guias/{{ g.pk }}/" class="guia-result">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span class="result-badge badge-guia">Guía</span>
+        <span class="result-badge badge-{{ g.nivel }}">{{ g.get_nivel_display }}</span>
+      </div>
+      <div class="guia-result-title">{{ g.titulo }}</div>
+      <div class="guia-result-desc">{{ g.descripcion }}</div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="no-results">
+    <span class="no-results-icon">🌱</span>
+    <div class="no-results-title">Sin resultados</div>
+    <div class="no-results-sub">Intenta con otras palabras clave</div>
+  </div>
+  {% endif %}
+
+  {% endif %}
+
+</div>
+{% endblock %}

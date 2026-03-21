@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}Tienda de Semillas - Garden Warfare{% endblock %}
+
+{% block extra_styles %}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.tienda-wrap { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
+
+.tienda-hero {
+  text-align: center; padding: 2rem 0 1.5rem; position: relative;
+}
+.tienda-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(251,191,36,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.tienda-title {
+  font-family: 'Fredoka One', cursive; font-size: 2.2rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 0.3rem;
+  position: relative; z-index: 1;
+}
+.tienda-title span { color: var(--yellow); }
+.tienda-sub { font-size: 0.85rem; color: var(--muted); font-weight: 700; position: relative; z-index: 1; }
+
+/* BALANCE */
+.balance-card {
+  background: var(--bg2); border: 1px solid rgba(251,191,36,0.3);
+  border-radius: 16px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(8,12,8,0));
+}
+.balance-icon { font-size: 2.5rem; }
+.balance-info { flex: 1; }
+.balance-num {
+  font-family: 'Fredoka One', cursive; font-size: 2.5rem;
+  color: var(--yellow); letter-spacing: 1px; line-height: 1;
+}
+.balance-label { font-size: 0.72rem; color: var(--muted); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.balance-bonus {
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 10px; padding: 0.5rem 1rem;
+  font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: var(--green);
+}
+
+/* COMO GANAR */
+.ganar-section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.5rem;
+}
+.ganar-title {
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+  color: #e5e7eb; margin-bottom: 0.8rem; letter-spacing: 0.5px;
+}
+.ganar-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+.ganar-item {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 10px; padding: 6px 12px;
+  font-size: 0.78rem; font-weight: 800; color: #9ca3af;
+  display: flex; align-items: center; gap: 5px;
+}
+.ganar-item span { color: var(--yellow); }
+
+/* LOGIN BONUS */
+.login-bonus-alert {
+  background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: var(--green);
+}
+
+/* TIENDA GRID */
+.tienda-section-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.tienda-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 2rem;
+}
+
+.item-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.2rem; text-align: center;
+  transition: all 0.2s; position: relative; overflow: hidden;
+}
+.item-card:hover { transform: translateY(-3px); border-color: rgba(251,191,36,0.2); }
+.item-card.exclusivo { border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.05); }
+.item-card.exclusivo:hover { border-color: rgba(168,85,247,0.5); box-shadow: 0 8px 25px rgba(168,85,247,0.15); }
+.item-card.elite { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.05); }
+.item-card.elite:hover { box-shadow: 0 8px 25px rgba(255,215,0,0.2); }
+
+.item-emoji { font-size: 2.5rem; display: block; margin-bottom: 0.6rem; }
+.item-nombre {
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+  color: #e5e7eb; margin-bottom: 0.3rem; letter-spacing: 0.5px;
+}
+.item-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.4; margin-bottom: 0.8rem; }
+.item-precio {
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+  color: var(--yellow); margin-bottom: 0.8rem;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.item-card.exclusivo .item-precio { color: #a855f7; }
+.item-card.elite .item-precio { color: #FFD700; }
+
+.btn-comprar {
+  width: 100%; padding: 8px;
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem; letter-spacing: 0.5px;
+  background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.3);
+  border-radius: 10px; color: var(--yellow); cursor: pointer; transition: all 0.2s;
+  text-decoration: none; display: block;
+}
+.btn-comprar:hover { background: rgba(251,191,36,0.25); }
+.btn-comprar:disabled, .btn-comprar.sin-fondos {
+  background: rgba(255,255,255,0.04); border-color: var(--border);
+  color: var(--muted); cursor: not-allowed;
+}
+.item-card.exclusivo .btn-comprar {
+  background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.3); color: #a855f7;
+}
+.item-card.exclusivo .btn-comprar:hover { background: rgba(168,85,247,0.25); }
+.item-card.elite .btn-comprar {
+  background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.4); color: #FFD700;
+}
+
+.raro-badge {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 6px; border-radius: 6px;
+}
+.raro-badge.exclusivo { background: rgba(168,85,247,0.2); color: #a855f7; }
+.raro-badge.elite { background: rgba(255,215,0,0.2); color: #FFD700; }
+
+/* HISTORIAL */
+.historial-section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem 1.2rem;
+}
+.historial-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem;
+}
+.historial-item:last-child { border-bottom: none; }
+.historial-motivo { color: #9ca3af; font-weight: 700; }
+.historial-fecha { font-size: 0.68rem; color: var(--muted); }
+.historial-cantidad { font-family: 'Fredoka One', cursive; font-size: 0.9rem; }
+.historial-cantidad.ganado { color: var(--green); }
+.historial-cantidad.gastado { color: #f87171; }
+{% endblock %}
+
+{% block content %}
+<div class="tienda-wrap">
+
+  <div class="tienda-hero">
+    <div class="tienda-title">☀️ Tienda de <span>Semillas</span></div>
+    <div class="tienda-sub">Gana semillas siendo activo y canjéalas por cosméticos exclusivos</div>
+  </div>
+
+  {% if login_bonus %}
+  <div class="login-bonus-alert">
+    🌱 ¡Bonus de login diario! +3 ☀️ semillas recibidas
+  </div>
+  {% endif %}
+
+  <!-- BALANCE -->
+  <div class="balance-card">
+    <div class="balance-icon">☀️</div>
+    <div class="balance-info">
+      <div class="balance-num">{{ perfil.semillas }}</div>
+      <div class="balance-label">Semillas disponibles</div>
+    </div>
+    <div class="balance-bonus">🔄 Login diario: +3 ☀️</div>
+  </div>
+
+  <!-- COMO GANAR -->
+  <div class="ganar-section">
+    <div class="ganar-title">¿Cómo ganar semillas? ☀️</div>
+    <div class="ganar-grid">
+      <div class="ganar-item">📝 Publicar post <span>+5</span></div>
+      <div class="ganar-item">❤️ Recibir like <span>+2</span></div>
+      <div class="ganar-item">💬 Comentar <span>+1</span></div>
+      <div class="ganar-item">🏅 Logro desbloqueado <span>+10</span></div>
+      <div class="ganar-item">🌅 Login diario <span>+3</span></div>
+    </div>
+  </div>
+
+  <!-- TIENDA -->
+  <div class="tienda-section-title">🛒 Cosméticos disponibles</div>
+  <div class="tienda-grid">
+    {% for item in tienda %}
+    <div class="item-card {% if item.precio >= 2000 %}elite{% elif item.precio >= 500 %}exclusivo{% endif %}">
+
+      {% if item.precio >= 2000 %}
+      <span class="raro-badge elite">ÉLITE</span>
+      {% elif item.precio >= 500 %}
+      <span class="raro-badge exclusivo">RARO</span>
+      {% endif %}
+
+      <span class="item-emoji">
+        {% if 'Marco' in item.nombre %}🖼️
+        {% elif 'Nombre' in item.nombre %}✍️
+        {% elif 'Fondo' in item.nombre %}🎭
+        {% elif 'Animado' in item.nombre %}✨
+        {% elif 'Élite' in item.nombre %}🔱
+        {% else %}🎁{% endif %}
+      </span>
+      <div class="item-nombre">{{ item.nombre }}</div>
+      <div class="item-desc">{{ item.descripcion }}</div>
+      <div class="item-precio">☀️ {{ item.precio }}</div>
+
+      {% if perfil.semillas >= item.precio %}
+      <a href="/usuarios/tienda/comprar/{{ item.id }}/" class="btn-comprar">
+        Comprar
+      </a>
+      {% else %}
+      <span class="btn-comprar sin-fondos">
+        Te faltan {{ item.precio|add:"-0" }} ☀️
+      </span>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- HISTORIAL -->
+  <div class="tienda-section-title">📋 Historial de semillas</div>
+  <div class="historial-section">
+    {% for h in historial %}
+    <div class="historial-item">
+      <div>
+        <div class="historial-motivo">{{ h.motivo }}</div>
+        <div class="historial-fecha">{{ h.fecha|date:"d/m/Y H:i" }}</div>
+      </div>
+      <div class="historial-cantidad {{ h.tipo }}">
+        {% if h.tipo == 'ganado' %}+{% else %}-{% endif %}{{ h.cantidad }} ☀️
+      </div>
+    </div>
+    {% empty %}
+    <div style="text-align:center;padding:2rem;color:var(--muted);font-weight:700;">
+      🌱 Sin actividad aún
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.titulo }} - Garden Warfare{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_styles %}
+.detalle-wrap { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+  color: var(--muted); text-decoration: none; margin-bottom: 1.2rem;
+  padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); transition: all 0.15s;
+}
+.back-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.15); }
+
+.post-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 1.8rem; margin-bottom: 1.2rem;
+}
+.post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.2rem; }
+.post-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(34,197,94,0.12); border: 2px solid rgba(34,197,94,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; flex-shrink: 0; text-decoration: none; overflow: hidden; padding: 0;
+}
+.post-avatar.zombie { border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.12); }
+.post-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.post-user-info { flex: 1; }
+.post-username {
+  font-family: 'Fredoka One', cursive; color: #e5e7eb;
+  font-size: 1rem; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.post-username:hover { color: var(--green); }
+.post-meta { font-size: 0.72rem; color: var(--muted); font-weight: 700; margin-top: 2px; }
+.post-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+.post-badge {
+  font-size: 0.62rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 6px;
+}
+.badge-planta { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-zombie { background: rgba(168,85,247,0.12); color: #c4b5fd; }
+.badge-ambos { background: rgba(251,191,36,0.12); color: #fde68a; }
+.badge-general { background: rgba(255,255,255,0.08); color: #9ca3af; }
+.badge-estrategia { background: rgba(239,68,68,0.12); color: #fca5a5; }
+.badge-builds { background: rgba(59,130,246,0.12); color: #93c5fd; }
+.badge-humor { background: rgba(251,191,36,0.12); color: #fde68a; }
+.badge-noticias { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-rango { background: rgba(255,215,0,0.1); color: var(--yellow); }
+
+.post-titulo {
+  font-family: 'Fredoka One', cursive; font-size: 1.6rem;
+  color: #e5e7eb; margin-bottom: 1rem; letter-spacing: 1px; line-height: 1.2;
+}
+.post-editado { font-size: 0.72rem; color: var(--muted); font-weight: 800; margin-bottom: 0.8rem; }
+.post-content { font-size: 0.95rem; color: #9ca3af; line-height: 1.8; margin-bottom: 1.2rem; white-space: pre-line; }
+.post-img { width: 100%; border-radius: 12px; margin-bottom: 1.2rem; border: 1px solid var(--border); max-height: 500px; object-fit: cover; }
+.post-actions {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding-top: 1rem; border-top: 1px solid var(--border);
+}
+.post-action {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.8rem; font-weight: 800; color: var(--muted);
+  background: transparent; border: 1px solid var(--border);
+  border-radius: 20px; padding: 6px 14px; cursor: pointer;
+  transition: all 0.15s; text-decoration: none;
+}
+.post-action:hover { background: rgba(255,255,255,0.04); color: #9ca3af; }
+.post-action.like:hover { border-color: rgba(239,68,68,0.3); color: #f87171; }
+.post-action.like.liked { border-color: rgba(239,68,68,0.4); color: #f87171; background: rgba(239,68,68,0.08); }
+
+.comentarios-section { margin-top: 1.5rem; }
+.comentarios-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+  color: #e5e7eb; margin-bottom: 1rem; letter-spacing: 1px;
+  display: flex; align-items: center; gap: 8px;
+}
+.comentarios-count {
+  font-size: 0.75rem; background: rgba(34,197,94,0.15);
+  color: var(--green); padding: 2px 10px; border-radius: 20px; font-weight: 800;
+}
+
+.nuevo-comentario {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.2rem; margin-bottom: 1rem;
+}
+.comentario-input-row { display: flex; gap: 10px; align-items: flex-start; }
+.comentario-avatar-wrap {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; overflow: hidden; padding: 0;
+}
+.comentario-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.comentario-textarea {
+  flex: 1; padding: 10px 14px; border-radius: 12px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  color: #e5e7eb; font-family: 'Nunito', sans-serif; font-size: 0.88rem;
+  outline: none; resize: none; min-height: 80px; line-height: 1.5; transition: border-color 0.2s;
+}
+.comentario-textarea:focus { border-color: rgba(34,197,94,0.3); }
+.comentario-textarea::placeholder { color: var(--muted); }
+.comentario-submit {
+  margin-top: 8px; margin-left: 46px;
+  font-family: 'Fredoka One', cursive; font-size: 0.88rem; letter-spacing: 0.5px;
+  padding: 8px 20px; border-radius: 10px;
+  background: var(--green); border: none; color: #fff; cursor: pointer;
+  box-shadow: 0 4px 12px var(--green-glow); transition: all 0.2s;
+}
+.comentario-submit:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+.comentario-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem; margin-bottom: 0.7rem; transition: border-color 0.2s;
+}
+.comentario-card:hover { border-color: rgba(34,197,94,0.1); }
+.comentario-header { display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.comentario-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; flex-shrink: 0; text-decoration: none; overflow: hidden; padding: 0;
+}
+.comentario-avatar.zombie { border-color: rgba(168,85,247,0.2); background: rgba(168,85,247,0.12); }
+.comentario-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.comentario-username {
+  font-family: 'Fredoka One', cursive; color: #e5e7eb;
+  font-size: 0.85rem; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.comentario-username:hover { color: var(--green); }
+.comentario-meta { font-size: 0.68rem; color: var(--muted); font-weight: 700; margin-left: auto; }
+.comentario-content { font-size: 0.88rem; color: #9ca3af; line-height: 1.6; margin-left: 42px; }
+
+.no-comentarios {
+  text-align: center; padding: 2rem;
+  background: rgba(255,255,255,0.02); border-radius: 12px;
+  border: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-weight: 700;
+}
+.login-to-comment {
+  background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15);
+  border-radius: 12px; padding: 1rem; text-align: center; margin-bottom: 1rem;
+}
+.login-to-comment p { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem; font-weight: 700; }
+.login-to-comment a { font-family: 'Fredoka One', cursive; font-size: 0.88rem; color: var(--green); text-decoration: none; }
+{% endblock %}
+
+{% block content %}
+<div class="detalle-wrap">
+  <a href="/foro/" class="back-btn">← Volver al feed</a>
+
+  <div class="post-card">
+    <div class="post-header">
+      <a href="/usuarios/perfil/{{ post.autor.username }}/"
+        class="post-avatar {% if post.autor.perfil.faccion == 'zombie' %}zombie{% endif %}">
+        {% if post.autor.perfil.avatar %}<img src="{{ post.autor.perfil.avatar.url }}" alt="{{ post.autor.username }}">
+        {% elif post.autor.perfil.faccion == 'planta' %}🌱
+        {% elif post.autor.perfil.faccion == 'zombie' %}🧟
+        {% else %}⚔️{% endif %}
+      </a>
+      <div class="post-user-info">
+        <a href="/usuarios/perfil/{{ post.autor.username }}/" class="post-username">
+          {{ post.autor.username }}
+          {% if post.autor.is_staff %}
+          <span class="admin-badge-icon" title="Admin"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+          {% elif post.autor.perfil.verificado %}
+          <span class="verificado-badge" title="Verificado"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+          {% endif %}
+        </a>
+        <div class="post-meta">
+          {{ post.fecha|date:"d/m/Y H:i" }}
+          {% if post.autor.perfil %}
+          • <span class="post-badge badge-rango">{{ post.autor.perfil.get_rango_display }}</span>
+          {% endif %}
+        </div>
+        <div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px;">
+          {% for logro in post.autor.logros.all %}
+          {% if logro.medalla.tipo == 'manual' %}
+          <span title="{{ logro.medalla.nombre }}" style="font-size:0.8rem;cursor:help;">{{ logro.medalla.emoji }}</span>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="post-badges">
+        <span class="post-badge badge-{{ post.categoria }}">{{ post.get_categoria_display }}</span>
+        <span class="post-badge badge-{{ post.faccion }}">{{ post.get_faccion_display }}</span>
+      </div>
+    </div>
+
+    <div class="post-titulo">{{ post.titulo }}</div>
+    {% if post.fue_editado %}
+    <div class="post-editado">✏️ Editado el {{ post.editado|date:"d/m/Y H:i" }}</div>
+    {% endif %}
+    <div class="post-content">{{ post.contenido }}</div>
+
+    {% if post.imagen %}
+    <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="post-img">
+    {% endif %}
+
+    <div class="post-actions">
+      <button class="post-action like {% if request.user in post.likes.all %}liked{% endif %}"
+        onclick="likePost({{ post.pk }}, this)">
+        ❤️ <span id="likes-{{ post.pk }}">{{ post.total_likes }}</span> Likes
+      </button>
+      <span class="post-action">💬 {{ post.total_comentarios }} Comentarios</span>
+      {% if request.user == post.autor %}
+      <a href="/foro/post/{{ post.pk }}/editar/" class="post-action" style="color:var(--yellow);border-color:rgba(251,191,36,0.2);">✏️ Editar</a>
+      <a href="/foro/post/{{ post.pk }}/eliminar/" class="post-action" style="color:#f87171;border-color:rgba(239,68,68,0.2);">🗑️ Eliminar</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="comentarios-section">
+    <div class="comentarios-title">
+      💬 Comentarios
+      <span class="comentarios-count">{{ comentarios.count }}</span>
+    </div>
+
+    {% if request.user.is_authenticated %}
+    <div class="nuevo-comentario">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="comentario-input-row">
+          <div class="comentario-avatar-wrap">
+            {% if request.user.perfil.avatar %}<img src="{{ request.user.perfil.avatar.url }}" alt="{{ request.user.username }}">
+            {% elif request.user.perfil.faccion == 'planta' %}🌱
+            {% elif request.user.perfil.faccion == 'zombie' %}🧟
+            {% else %}⚔️{% endif %}
+          </div>
+          <textarea name="contenido" class="comentario-textarea"
+            placeholder="Escribe un comentario..." maxlength="500" required></textarea>
+        </div>
+        <button type="submit" class="comentario-submit">💬 Comentar</button>
+      </form>
+    </div>
+    {% else %}
+    <div class="login-to-comment">
+      <p>¿Quieres comentar?</p>
+      <a href="/usuarios/login/">Inicia sesión</a> o <a href="/usuarios/register/">Regístrate</a>
+    </div>
+    {% endif %}
+
+    {% for comentario in comentarios %}
+    <div class="comentario-card">
+      <div class="comentario-header">
+        <a href="/usuarios/perfil/{{ comentario.autor.username }}/"
+          class="comentario-avatar {% if comentario.autor.perfil.faccion == 'zombie' %}zombie{% endif %}">
+          {% if comentario.autor.perfil.avatar %}<img src="{{ comentario.autor.perfil.avatar.url }}" alt="{{ comentario.autor.username }}">
+          {% elif comentario.autor.perfil.faccion == 'planta' %}🌱
+          {% elif comentario.autor.perfil.faccion == 'zombie' %}🧟
+          {% else %}⚔️{% endif %}
+        </a>
+        <a href="/usuarios/perfil/{{ comentario.autor.username }}/" class="comentario-username">
+          {{ comentario.autor.username }}
+          {% if comentario.autor.is_staff %}
+          <span class="admin-badge-icon" title="Admin"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+          {% elif comentario.autor.perfil.verificado %}
+          <span class="verificado-badge" title="Verificado"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+          {% endif %}
+        </a>
+        {% for logro in comentario.autor.logros.all %}
+        {% if logro.medalla.tipo == 'manual' %}
+        <span title="{{ logro.medalla.nombre }}" style="font-size:0.8rem;cursor:help;">{{ logro.medalla.emoji }}</span>
+        {% endif %}
+        {% endfor %}
+        {% if comentario.autor.perfil %}
+        <span class="post-badge badge-rango">{{ comentario.autor.perfil.get_rango_display }}</span>
+        {% endif %}
+        <span class="comentario-meta">{{ comentario.fecha|timesince }} ago</span>
+      </div>
+      <div class="comentario-content">{{ comentario.contenido }}</div>
+    </div>
+    {% empty %}
+    <div class="no-comentarios">🌱 Sé el primero en comentar</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function likePost(pk, btn) {
+  fetch(`/foro/post/${pk}/like/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById(`likes-${pk}`).textContent = data.total;
+    btn.classList.toggle('liked', data.liked);
+  });
+}
+</script>
+{% endblock %}

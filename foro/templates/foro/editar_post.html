@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Post - Garden Warfare{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_styles %}
+.editar-wrap {
+  max-width: 700px; margin: 2rem auto; padding: 0 1rem;
+}
+
+.editar-header { margin-bottom: 1.5rem; }
+.editar-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.8rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 0.3rem;
+}
+.editar-title span { color: var(--yellow); }
+.editar-sub { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
+
+.editar-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 2rem;
+}
+
+.edited-warning {
+  background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 12px; padding: 0.8rem 1rem; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.82rem; color: #fde68a; font-weight: 700;
+}
+
+.form-group { margin-bottom: 1.2rem; }
+.form-label {
+  font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+  color: var(--green); letter-spacing: 1px; display: block; margin-bottom: 6px;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%; padding: 10px 14px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  border-radius: 10px; color: #e5e7eb;
+  font-family: 'Nunito', sans-serif; font-size: 0.92rem;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: rgba(34,197,94,0.4); background: rgba(255,255,255,0.07);
+}
+.form-textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+.form-select option { background: #0d140d; }
+.char-count { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-align: right; margin-top: 4px; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
+
+.faction-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.faction-opt {
+  padding: 10px 8px; border-radius: 10px; cursor: pointer;
+  border: 1.5px solid var(--border); background: rgba(255,255,255,0.03);
+  text-align: center; transition: all 0.15s;
+}
+.faction-opt input { display: none; }
+.faction-opt:has(input:checked).plant { border-color: var(--green); background: rgba(34,197,94,0.12); }
+.faction-opt:has(input:checked).zombie { border-color: #a855f7; background: rgba(168,85,247,0.12); }
+.faction-opt:has(input:checked).neutral { border-color: var(--yellow); background: rgba(251,191,36,0.12); }
+.faction-emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+.faction-label { font-family: 'Fredoka One', cursive; font-size: 0.78rem; color: #9ca3af; }
+.faction-opt:has(input:checked).plant .faction-label { color: var(--green); }
+.faction-opt:has(input:checked).zombie .faction-label { color: #a855f7; }
+.faction-opt:has(input:checked).neutral .faction-label { color: var(--yellow); }
+
+.img-actual {
+  margin-bottom: 0.8rem; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--border); max-height: 150px; object-fit: cover; width: 100%;
+}
+.img-upload {
+  border: 2px dashed var(--border); border-radius: 12px;
+  padding: 1rem; text-align: center; cursor: pointer;
+  transition: all 0.2s; position: relative;
+}
+.img-upload:hover { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.04); }
+.img-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.img-upload-text { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
+
+.form-actions { display: flex; gap: 10px; margin-top: 1.5rem; }
+.btn-save {
+  flex: 1; padding: 13px;
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem; letter-spacing: 1px;
+  background: var(--yellow); border: none; border-radius: 12px;
+  color: #0d140d; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(251,191,36,0.3); transition: all 0.2s;
+}
+.btn-save:hover { background: #f59e0b; transform: translateY(-2px); }
+.btn-cancel {
+  padding: 13px 20px;
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  background: transparent; border: 1px solid var(--border); border-radius: 12px;
+  color: var(--muted); text-decoration: none; text-align: center; transition: all 0.15s;
+}
+.btn-cancel:hover { border-color: rgba(255,255,255,0.15); color: #e5e7eb; }
+{% endblock %}
+
+{% block content %}
+<div class="editar-wrap">
+  <div class="editar-header">
+    <div class="editar-title">✏️ Editar <span>Post</span></div>
+    <div class="editar-sub">Modifica tu publicación</div>
+  </div>
+
+  <div class="editar-card">
+    <div class="edited-warning">
+      ⚠️ Al guardar el post aparecerá como <strong>editado</strong> para todos los usuarios.
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label">📝 Título</label>
+        <input type="text" name="titulo" class="form-input"
+          value="{{ post.titulo }}" required maxlength="200" id="titulo-input">
+        <div class="char-count"><span id="titulo-count">{{ post.titulo|length }}</span>/200</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">💬 Contenido</label>
+        <textarea name="contenido" class="form-textarea" required id="contenido-input">{{ post.contenido }}</textarea>
+        <div class="char-count"><span id="contenido-count">{{ post.contenido|length }}</span> caracteres</div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">🏷️ Categoría</label>
+          <select name="categoria" class="form-select">
+            <option value="general" {% if post.categoria == 'general' %}selected{% endif %}>💬 General</option>
+            <option value="estrategia" {% if post.categoria == 'estrategia' %}selected{% endif %}>⚔️ Estrategia</option>
+            <option value="builds" {% if post.categoria == 'builds' %}selected{% endif %}>🔧 Builds</option>
+            <option value="humor" {% if post.categoria == 'humor' %}selected{% endif %}>😄 Humor</option>
+            <option value="noticias" {% if post.categoria == 'noticias' %}selected{% endif %}>📰 Noticias</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">⚔️ Facción</label>
+          <div class="faction-selector">
+            <label class="faction-opt plant">
+              <input type="radio" name="faccion" value="planta" {% if post.faccion == 'planta' %}checked{% endif %}>
+              <span class="faction-emoji">🌱</span>
+              <span class="faction-label">Plantas</span>
+            </label>
+            <label class="faction-opt zombie">
+              <input type="radio" name="faccion" value="zombie" {% if post.faccion == 'zombie' %}checked{% endif %}>
+              <span class="faction-emoji">🧟</span>
+              <span class="faction-label">Zombies</span>
+            </label>
+            <label class="faction-opt neutral">
+              <input type="radio" name="faccion" value="ambos" {% if post.faccion == 'ambos' %}checked{% endif %}>
+              <span class="faction-emoji">⚔️</span>
+              <span class="faction-label">Ambos</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">🖼️ Imagen</label>
+        {% if post.imagen %}
+        <img src="{{ post.imagen.url }}" alt="Imagen actual" class="img-actual">
+        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem;font-weight:700;">Sube una nueva imagen para reemplazarla</p>
+        {% endif %}
+        <div class="img-upload">
+          <input type="file" name="imagen" accept="image/*" onchange="previewImg(this)">
+          <div class="img-upload-text">📸 {% if post.imagen %}Cambiar imagen{% else %}Subir imagen (opcional){% endif %}</div>
+        </div>
+        <img id="img-preview" style="display:none;width:100%;border-radius:10px;margin-top:0.8rem;max-height:150px;object-fit:cover;" src="" alt="">
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-save">💾 Guardar cambios</button>
+        <a href="/foro/post/{{ post.pk }}/" class="btn-cancel">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.getElementById('titulo-input').addEventListener('input', function() {
+    document.getElementById('titulo-count').textContent = this.value.length;
+  });
+  document.getElementById('contenido-input').addEventListener('input', function() {
+    document.getElementById('contenido-count').textContent = this.value.length;
+  });
+  function previewImg(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('img-preview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+{% endblock %}

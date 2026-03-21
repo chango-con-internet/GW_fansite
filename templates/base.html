@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Garden Warfare Fan Site{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #22c55e;
+      --green-dark: #16a34a;
+      --green-glow: rgba(34,197,94,0.3);
+      --yellow: #fbbf24;
+      --bg: #080c08;
+      --bg2: #0d140d;
+      --border: rgba(255,255,255,0.07);
+      --text: #f0fdf0;
+      --muted: #4b5563;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -1;
+      background-image:
+        linear-gradient(rgba(34,197,94,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,197,94,0.03) 1px, transparent 1px);
+      background-size: 50px 50px; pointer-events: none;
+    }
+
+    /* CURSOR */
+    .cursor {
+      position: fixed; z-index: 99999; pointer-events: none;
+      transform: translate(-4px, -4px); transition: transform 0.08s ease;
+      filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.6));
+    }
+    .cursor.hovering { transform: translate(-4px, -4px) scale(1.25); }
+    .cursor.clicking { transform: translate(-4px, -4px) scale(0.85); }
+
+    /* VERIFICADO AZUL - tamaño ajustado para base.html */
+    .verificado-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; /* tamaño más grande */
+      margin-left: 4px; vertical-align: middle; flex-shrink: 0;
+      position: relative; top: -1px;
+    }
+    .verificado-badge svg { width: 20px; height: 20px; }
+
+    /* ADMIN DORADO - tamaño ajustado */
+    .admin-badge-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; /* tamaño más grande */
+      margin-left: 4px; vertical-align: middle; flex-shrink: 0;
+      position: relative; top: -1px;
+    }
+    .admin-badge-icon svg { width: 20px; height: 20px; }
+    .admin-badge-icon svg {
+      fill: none; stroke: #fff;
+      stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,12,8,0.95);
+      border-bottom: 1px solid rgba(34,197,94,0.12);
+      padding: 0.8rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(20px);
+    }
+
+    .nav-logo {
+      font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: #fff;
+      text-decoration: none; letter-spacing: 2px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--green); display: flex; align-items: center;
+      justify-content: center; font-size: 1rem;
+      box-shadow: 0 0 12px var(--green-glow);
+    }
+    .nav-logo span { color: var(--green); }
+
+    .nav-center {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: 12px; padding: 4px;
+    }
+    .nav-link {
+      font-family: 'Fredoka One', cursive; font-size: 0.88rem; letter-spacing: 0.5px;
+      color: var(--muted); text-decoration: none;
+      padding: 6px 14px; border-radius: 8px;
+      transition: all 0.15s; display: flex; align-items: center; gap: 5px;
+    }
+    .nav-link:hover { background: rgba(255,255,255,0.06); color: #e5e7eb; }
+    .nav-link.active { background: rgba(34,197,94,0.15); color: var(--green); }
+
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+
+    .nav-btn-login {
+      font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: var(--muted);
+      text-decoration: none; padding: 7px 16px; border-radius: 10px;
+      border: 1px solid var(--border); background: transparent; transition: all 0.15s;
+    }
+    .nav-btn-login:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.15); }
+
+    .nav-btn-register {
+      font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: #fff;
+      text-decoration: none; padding: 7px 16px; border-radius: 10px;
+      background: var(--green); box-shadow: 0 4px 15px var(--green-glow); transition: all 0.15s;
+    }
+    .nav-btn-register:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+    .nav-user { display: flex; align-items: center; gap: 8px; }
+    .nav-user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(34,197,94,0.15); border: 1.5px solid rgba(34,197,94,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; text-decoration: none; transition: all 0.15s;
+      position: relative; overflow: hidden; padding: 0;
+    }
+    .nav-user-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .nav-user-avatar:hover { border-color: var(--green); }
+    .nav-user-name {
+      font-family: 'Fredoka One', cursive; font-size: 0.88rem;
+      color: #e5e7eb; text-decoration: none; letter-spacing: 0.5px;
+      display: inline-flex; align-items: center; gap: 2px;
+    }
+    .nav-user-name:hover { color: var(--green); }
+    .nav-logout {
+      font-size: 0.78rem; font-weight: 800; color: #ef4444;
+      text-decoration: none; padding: 5px 10px; border-radius: 8px;
+      border: 1px solid rgba(239,68,68,0.2); transition: all 0.15s;
+    }
+    .nav-logout:hover { background: rgba(239,68,68,0.1); }
+
+    .nav-panel {
+      font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+      color: var(--yellow); text-decoration: none; padding: 7px 14px;
+      border-radius: 10px; border: 1px solid rgba(251,191,36,0.3);
+      background: rgba(251,191,36,0.08); transition: all 0.15s;
+    }
+    .nav-panel:hover { background: rgba(251,191,36,0.15); }
+
+    .nav-toggle {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; padding: 4px;
+    }
+    .nav-toggle span { display: block; width: 20px; height: 2px; background: var(--muted); border-radius: 2px; }
+
+    .nav-mobile {
+      display: none; flex-direction: column; gap: 4px;
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: rgba(8,12,8,0.98); border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem; z-index: 99;
+    }
+    .nav-mobile.open { display: flex; }
+
+    @media (max-width: 700px) {
+      .nav-center { display: none; }
+      .nav-toggle { display: flex; }
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg2); border-top: 1px solid var(--border);
+      padding: 3rem 2rem 2rem; margin-top: 2rem;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem;
+    }
+    @media (max-width: 700px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
+
+    .footer-logo {
+      font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #fff;
+      letter-spacing: 2px; display: flex; align-items: center; gap: 8px;
+      margin-bottom: 0.8rem; text-decoration: none;
+    }
+    .footer-logo-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: var(--green); display: flex; align-items: center;
+      justify-content: center; font-size: 0.9rem;
+    }
+    .footer-logo span { color: var(--green); }
+    .footer-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.7; max-width: 220px; }
+
+    .footer-col-title {
+      font-family: 'Fredoka One', cursive; font-size: 0.78rem;
+      color: #e5e7eb; letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 0.8rem; opacity: 0.6;
+    }
+    .footer-link {
+      display: block; font-size: 0.82rem; color: var(--muted);
+      text-decoration: none; font-weight: 700; padding: 3px 0; transition: color 0.15s;
+    }
+    .footer-link:hover { color: var(--green); }
+
+    .footer-bottom {
+      max-width: 1100px; margin: 2rem auto 0;
+      padding-top: 1.5rem; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); font-weight: 700; }
+    .footer-copy span { color: var(--green); }
+    .footer-factions { display: flex; gap: 8px; }
+    .faction-pill {
+      font-size: 0.68rem; font-weight: 800; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+    }
+    .faction-pill.plant { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); color: var(--green); }
+    .faction-pill.zombie { background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); color: #a855f7; }
+
+    {% block extra_styles %}{% endblock %}
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <svg class="cursor" id="cursor" width="26" height="34" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 2 L3 26 L9 20 L13 30 L16 29 L12 19 L19 19 Z" fill="rgba(0,0,0,0.4)" transform="translate(2,2)"/>
+    <path d="M3 2 L3 26 L9 20 L13 30 L16 29 L12 19 L19 19 Z" fill="#3d8a28" stroke="#1a4a0a" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M3 2 L3 26 L9 20 L13 30 L16 29 L12 19 L19 19 Z" fill="#5DBB3F" stroke="#2d6a1a" stroke-width="1" stroke-linejoin="round"/>
+    <path d="M5 5 L5 20 L9 16 L12 24 L13 23 L10 15 L15 15 Z" fill="#7dd44a" opacity="0.4"/>
+    <line x1="3" y1="2" x2="19" y2="19" stroke="#a8ed6a" stroke-width="0.8" opacity="0.5"/>
+  </svg>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-icon">🌻</div>
+      GW <span>FAN</span>
+    </a>
+
+    <div class="nav-center">
+      <a href="/" class="nav-link {% block nav_home %}{% endblock %}">🏠 Inicio</a>
+      <a href="/personajes/" class="nav-link {% block nav_personajes %}{% endblock %}">🌱 Personajes</a>
+      <a href="/guias/" class="nav-link {% block nav_guias %}{% endblock %}">📖 Guías</a>
+      <a href="/galeria/" class="nav-link {% block nav_galeria %}{% endblock %}">🖼️ Galería</a>
+    </div>
+
+    <div class="nav-right">
+      <a href="/buscar/" class="nav-btn-login" style="padding:7px 12px;">🔍</a>
+      {% if request.user.is_authenticated %}
+      <div class="nav-user">
+        {% if request.user.is_staff %}
+        <a href="/panel/" class="nav-panel">🛡️ Panel</a>
+        {% endif %}
+        <a href="/usuarios/notificaciones/" class="nav-user-avatar" id="notif-btn" title="Notificaciones">
+          🔔
+          <span id="notif-count" style="display:none;position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:0.5rem;font-weight:800;padding:1px 4px;border-radius:10px;font-family:'Fredoka One',cursive;min-width:14px;text-align:center;"></span>
+        </a>
+        <a href="/usuarios/tienda/" class="nav-btn-login" style="padding:7px 12px;" title="Tienda">☀️ {{ request.user.perfil.semillas }}</a>
+        <a href="/usuarios/mensajes/" class="nav-user-avatar" title="Mensajes" style="position:relative;">
+  💬
+  <span id="msg-count" style="display:none;position:absolute;top:-4px;right:-4px;background:#1d9bf0;color:#fff;font-size:0.5rem;font-weight:800;padding:1px 4px;border-radius:10px;font-family:'Fredoka One',cursive;min-width:14px;text-align:center;"></span>
+</a>
+        <a href="/usuarios/perfil/{{ request.user.username }}/" class="nav-user-avatar" style="overflow:hidden;padding:0;">
+          {% if request.user.perfil.avatar %}
+          <img src="{{ request.user.perfil.avatar.url }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+          {% elif request.user.perfil.faccion == 'planta' %}🌱
+          {% elif request.user.perfil.faccion == 'zombie' %}🧟
+          {% else %}⚔️{% endif %}
+        </a>
+        <a href="/usuarios/perfil/{{ request.user.username }}/" class="nav-user-name">
+          {{ request.user.username }}
+          {% if request.user.is_staff %}
+          <span class="admin-badge-icon" title="Admin">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/>
+              <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/>
+            </svg>
+          </span>
+          {% elif request.user.perfil.verificado %}
+          <span class="verificado-badge" title="Usuario verificado">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/>
+              <path fill="#fff" d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </span>
+          {% endif %}
+        </a>
+        <a href="/usuarios/logout/" class="nav-logout">Salir</a>
+      </div>
+      {% else %}
+      <a href="/usuarios/login/" class="nav-btn-login">Iniciar sesión</a>
+      <a href="/usuarios/register/" class="nav-btn-register">🌱 Registrarse</a>
+      {% endif %}
+      <button class="nav-toggle" onclick="document.getElementById('nav-mobile').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV -->
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="/" class="nav-link">🏠 Inicio</a>
+    <a href="/personajes/" class="nav-link">🌱 Personajes</a>
+    <a href="/guias/" class="nav-link">📖 Guías</a>
+    <a href="/galeria/" class="nav-link">🖼️ Galería</a>
+    <a href="/buscar/" class="nav-link">🔍 Buscar</a>
+    {% if request.user.is_authenticated %}
+    <a href="/usuarios/notificaciones/" class="nav-link">🔔 Notificaciones</a>
+    <a href="/usuarios/perfil/{{ request.user.username }}/" class="nav-link">👤 Mi perfil</a>
+    {% if request.user.is_staff %}
+    <a href="/panel/" class="nav-link" style="color:var(--yellow);">🛡️ Panel Admin</a>
+    {% endif %}
+    <a href="/usuarios/logout/" class="nav-link" style="color:#ef4444;">🚪 Salir</a>
+    {% else %}
+    <a href="/usuarios/login/" class="nav-link">Iniciar sesión</a>
+    <a href="/usuarios/register/" class="nav-link" style="color:var(--green);">🌱 Registrarse</a>
+    {% endif %}
+  </div>
+
+  {% block content %}{% endblock %}
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <a href="/" class="footer-logo">
+          <div class="footer-logo-icon">🌻</div>
+          GW <span>FAN</span>
+        </a>
+        <p class="footer-desc">La comunidad más grande de fans de Garden Warfare. Sitio no oficial creado con amor por un fan.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Explorar</div>
+        <a href="/personajes/" class="footer-link">🌱 Personajes</a>
+        <a href="/guias/" class="footer-link">📖 Guías</a>
+        <a href="/galeria/" class="footer-link">🖼️ Galería</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Comunidad</div>
+        <a href="/usuarios/tienda/" class="footer-link">☀️ Tienda</a>
+        <a href="/foro/" class="footer-link">💬 Foro</a>
+        <a href="/usuarios/clasificacion/" class="footer-link">🏆 Clasificación</a>
+        <a href="/usuarios/register/" class="footer-link">✨ Registrarse</a>
+        <a href="/usuarios/login/" class="footer-link">🔑 Iniciar sesión</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Facciones</div>
+        <a href="/foro/?faccion=planta" class="footer-link">🌱 Plantas</a>
+        <a href="/foro/?faccion=zombie" class="footer-link">🧟 Zombies</a>
+        <a href="#" class="footer-link">⚔️ GW1 vs GW2</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 <span>GW Fan Site</span> • Sitio no oficial • Hecho con 🌻</div>
+      <div class="footer-factions">
+        <span class="faction-pill plant">🌱 Plantas</span>
+        <span class="faction-pill zombie">🧟 Zombies</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+    document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+    document.querySelectorAll('a, button, [onclick]').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    {% if request.user.is_authenticated %}
+    function checkNotifs() {
+      fetch('/usuarios/notificaciones/count/')
+        .then(r => r.json())
+        .then(data => {
+          const badge = document.getElementById('notif-count');
+          if (badge) {
+            if (data.count > 0) { badge.textContent = data.count; badge.style.display = 'block'; }
+            else { badge.style.display = 'none'; }
+          }
+        }).catch(() => {});
+    }
+    checkNotifs();
+    setInterval(checkNotifs, 30000);
+    function checkMsgs() {
+  fetch('/usuarios/mensajes/count/')
+    .then(r => r.json())
+    .then(data => {
+      const badge = document.getElementById('msg-count');
+      if (badge) {
+        if (data.count > 0) { badge.textContent = data.count; badge.style.display = 'block'; }
+        else { badge.style.display = 'none'; }
+      }
+    }).catch(() => {});
+}
+checkMsgs();
+setInterval(checkMsgs, 30000);
+    {% endif %}
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

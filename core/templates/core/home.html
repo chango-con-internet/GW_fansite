@@ -1,0 +1,535 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Garden Warfare Fan Site - La Comunidad{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_styles %}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* HERO */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; padding: 2rem;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(50px); }
+}
+.hero-orb1 {
+  position: absolute; width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(34,197,94,0.07) 0%, transparent 70%);
+  top: -300px; right: -200px; border-radius: 50%;
+  animation: orbPulse 8s ease-in-out infinite;
+}
+.hero-orb2 {
+  position: absolute; width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(168,85,247,0.05) 0%, transparent 70%);
+  bottom: -200px; left: -100px; border-radius: 50%;
+  animation: orbPulse 6s ease-in-out infinite reverse;
+}
+@keyframes orbPulse {
+  0%,100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+.hero-inner {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+  max-width: 1100px; width: 100%;
+}
+@media (max-width: 800px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .hero-right { display: none; }
+}
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--green); margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s ease forwards;
+}
+.hero-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 1; letter-spacing: 2px; color: #fff;
+  margin-bottom: 0.8rem;
+  animation: fadeUp 0.7s ease forwards;
+}
+.hero-title .g { color: var(--green); text-shadow: 0 0 40px var(--green-glow); }
+.hero-title .w { color: var(--yellow); text-shadow: 0 0 40px rgba(251,191,36,0.3); }
+
+.hero-desc {
+  font-size: 1rem; color: #6b7280; line-height: 1.8;
+  margin-bottom: 2rem; max-width: 420px;
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.hero-actions {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 2.5rem;
+  animation: fadeUp 0.9s ease forwards;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 30px; border-radius: 12px;
+  font-family: 'Fredoka One', cursive; font-size: 1.05rem; letter-spacing: 1px;
+  background: var(--green); color: #fff; text-decoration: none;
+  box-shadow: 0 8px 30px var(--green-glow); transition: all 0.2s;
+}
+.btn-primary:hover { background: var(--green-dark); transform: translateY(-3px); box-shadow: 0 14px 40px var(--green-glow); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 24px; border-radius: 12px;
+  font-family: 'Fredoka One', cursive; font-size: 1.05rem; letter-spacing: 1px;
+  background: transparent; color: #9ca3af; text-decoration: none;
+  border: 1px solid var(--border); transition: all 0.2s;
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: rgba(255,255,255,0.2); }
+
+.hero-stats {
+  display: flex; gap: 2.5rem; flex-wrap: wrap;
+  animation: fadeUp 1s ease forwards;
+}
+.hero-stat-num {
+  font-family: 'Fredoka One', cursive; font-size: 2rem;
+  color: #fff; display: block; letter-spacing: 1px;
+}
+.hero-stat-label { font-size: 0.7rem; color: var(--muted); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* DECO CARDS */
+.hero-right { display: flex; flex-direction: column; gap: 10px; }
+.deco-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 0.9rem 1.1rem;
+  display: flex; align-items: center; gap: 10px;
+  animation: floatCard 4s ease-in-out infinite;
+  transition: border-color 0.2s;
+}
+.deco-card:nth-child(2) { animation-delay: 0.6s; margin-left: 1.5rem; }
+.deco-card:nth-child(3) { animation-delay: 1.2s; }
+.deco-card:nth-child(4) { animation-delay: 1.8s; margin-left: 1.5rem; }
+.deco-card:hover { border-color: rgba(34,197,94,0.25); }
+@keyframes floatCard {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.deco-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+}
+.av-g { background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.25); }
+.av-p { background: rgba(168,85,247,0.12); border: 1.5px solid rgba(168,85,247,0.25); }
+.av-y { background: rgba(251,191,36,0.12); border: 1.5px solid rgba(251,191,36,0.25); }
+.deco-name { font-family: 'Fredoka One', cursive; color: #e5e7eb; font-size: 0.85rem; }
+.deco-text { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+.deco-stats { display: flex; gap: 8px; margin-top: 3px; }
+.deco-stat { font-size: 0.65rem; color: #4b5563; font-weight: 800; }
+
+/* FEATURES SECTION */
+.features-section {
+  padding: 5rem 2rem; max-width: 1100px; margin: 0 auto;
+}
+.section-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 20px; padding: 4px 14px;
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--yellow); margin-bottom: 1rem;
+}
+.section-title {
+  font-family: 'Fredoka One', cursive; font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: #fff; letter-spacing: 1px; margin-bottom: 0.5rem; line-height: 1.1;
+}
+.section-title span { color: var(--green); }
+.section-desc { font-size: 0.92rem; color: var(--muted); max-width: 500px; line-height: 1.7; margin-bottom: 3rem; }
+
+.features-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.feature-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.5rem; transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--green); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s;
+}
+.feature-card:hover { background: #111911; border-color: rgba(34,197,94,0.15); transform: translateY(-3px); }
+.feature-card:hover::before { transform: scaleX(1); }
+.feature-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; margin-bottom: 1rem;
+}
+.feature-icon.purple { background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.2); }
+.feature-icon.yellow { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.2); }
+.feature-icon.blue { background: rgba(96,165,250,0.1); border-color: rgba(96,165,250,0.2); }
+.feature-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #e5e7eb; margin-bottom: 0.4rem; letter-spacing: 0.5px; }
+.feature-desc { font-size: 0.82rem; color: #6b7280; line-height: 1.6; }
+
+/* FACTIONS SECTION */
+.factions-section {
+  padding: 4rem 2rem; position: relative; overflow: hidden;
+  background: linear-gradient(180deg, transparent, rgba(34,197,94,0.03), transparent);
+}
+.factions-inner { max-width: 1100px; margin: 0 auto; }
+.factions-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem;
+}
+@media (max-width: 600px) { .factions-grid { grid-template-columns: 1fr; } }
+
+.faction-card-big {
+  border-radius: 20px; padding: 2rem; position: relative; overflow: hidden;
+  text-decoration: none; display: block; transition: all 0.2s;
+}
+.faction-card-big.plant {
+  background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(34,197,94,0.05));
+  border: 1px solid rgba(34,197,94,0.2);
+}
+.faction-card-big.zombie {
+  background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(168,85,247,0.05));
+  border: 1px solid rgba(168,85,247,0.2);
+}
+.faction-card-big:hover { transform: translateY(-4px); }
+.faction-card-big.plant:hover { box-shadow: 0 12px 40px rgba(34,197,94,0.15); }
+.faction-card-big.zombie:hover { box-shadow: 0 12px 40px rgba(168,85,247,0.15); }
+.faction-big-emoji { font-size: 4rem; display: block; margin-bottom: 1rem; }
+.faction-big-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.8rem;
+  letter-spacing: 1px; margin-bottom: 0.5rem;
+}
+.faction-card-big.plant .faction-big-title { color: var(--green); }
+.faction-card-big.zombie .faction-big-title { color: #a855f7; }
+.faction-big-desc { font-size: 0.88rem; color: #6b7280; line-height: 1.6; margin-bottom: 1.2rem; }
+.faction-big-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'Fredoka One', cursive; font-size: 0.85rem; letter-spacing: 0.5px;
+  padding: 8px 18px; border-radius: 10px; transition: all 0.15s;
+}
+.faction-card-big.plant .faction-big-btn {
+  background: rgba(34,197,94,0.15); color: var(--green);
+  border: 1px solid rgba(34,197,94,0.3);
+}
+.faction-card-big.zombie .faction-big-btn {
+  background: rgba(168,85,247,0.15); color: #a855f7;
+  border: 1px solid rgba(168,85,247,0.3);
+}
+
+/* RANKING SECTION */
+.ranking-section {
+  padding: 4rem 2rem; max-width: 1100px; margin: 0 auto;
+}
+.ranking-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;
+}
+@media (max-width: 700px) { .ranking-grid { grid-template-columns: 1fr; } }
+
+.ranking-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem;
+}
+.ranking-card-title {
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.rank-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.rank-row:last-child { border-bottom: none; }
+.rank-pos {
+  font-family: 'Fredoka One', cursive; font-size: 0.88rem;
+  color: var(--muted); width: 20px; flex-shrink: 0; text-align: center;
+}
+.rank-pos.gold { color: #FFD700; }
+.rank-pos.silver { color: #C0C0C0; }
+.rank-pos.bronze { color: #CD7F32; }
+.rank-emoji { font-size: 1.2rem; }
+.rank-info { flex: 1; }
+.rank-name-text { font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: #e5e7eb; }
+.rank-sub { font-size: 0.68rem; color: var(--muted); font-weight: 700; }
+.rank-val { font-family: 'Fredoka One', cursive; font-size: 0.88rem; color: var(--green); }
+
+/* CTA SECTION */
+.cta-section {
+  padding: 5rem 2rem; text-align: center; position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(34,197,94,0.06) 0%, transparent 70%);
+}
+.cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+.cta-title {
+  font-family: 'Fredoka One', cursive; font-size: clamp(2rem, 5vw, 3.5rem);
+  color: #fff; letter-spacing: 1px; margin-bottom: 1rem; line-height: 1.1;
+}
+.cta-title span { color: var(--green); }
+.cta-desc { font-size: 1rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; }
+.cta-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-tag">⚔️ Comunidad de Fans — No oficial</div>
+      <h1 class="hero-title">
+        <span class="g">GARDEN</span><br>
+        <span class="w">WARFARE</span><br>
+        FAN HUB
+      </h1>
+      <p class="hero-desc">La comunidad más grande de Garden Warfare. Comparte estrategias, conecta con jugadores y sube de rango.</p>
+      <div class="hero-actions">
+        <a href="/usuarios/register/" class="btn-primary">🌱 Unirse gratis</a>
+        <a href="/usuarios/login/" class="btn-ghost">Iniciar sesión →</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <span class="hero-stat-num">GW1</span>
+          <span class="hero-stat-label">& GW2</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">5</span>
+          <span class="hero-stat-label">Rangos</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">2</span>
+          <span class="hero-stat-label">Facciones</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">∞</span>
+          <span class="hero-stat-label">Diversión</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="deco-card">
+        <div class="deco-avatar av-g">🌱</div>
+        <div>
+          <div class="deco-name">PlantWarrior99</div>
+          <div class="deco-text">Mi mejor partida con Peashooter 🔥</div>
+          <div class="deco-stats"><span class="deco-stat">❤️ 24</span><span class="deco-stat">💬 8</span></div>
+        </div>
+      </div>
+      <div class="deco-card">
+        <div class="deco-avatar av-p">🧟</div>
+        <div>
+          <div class="deco-name">ZombieKing</div>
+          <div class="deco-text">Guía completa del Scientist 💀</div>
+          <div class="deco-stats"><span class="deco-stat">❤️ 41</span><span class="deco-stat">💬 15</span></div>
+        </div>
+      </div>
+      <div class="deco-card">
+        <div class="deco-avatar av-y">🌻</div>
+        <div>
+          <div class="deco-name">SunflowerPro</div>
+          <div class="deco-text">Tips para sanar en Garden Ops 🌟</div>
+          <div class="deco-stats"><span class="deco-stat">❤️ 18</span><span class="deco-stat">💬 6</span></div>
+        </div>
+      </div>
+      <div class="deco-card">
+        <div class="deco-avatar av-g">🌵</div>
+        <div>
+          <div class="deco-name">CactusSniper</div>
+          <div class="deco-text">Los mejores spots del mapa 🎯</div>
+          <div class="deco-stats"><span class="deco-stat">❤️ 33</span><span class="deco-stat">💬 11</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="features-section">
+  <div class="section-tag">✨ ¿Qué puedes hacer?</div>
+  <div class="section-title">Todo lo que necesitas<br><span>en un solo lugar</span></div>
+  <div class="section-desc">Únete a la comunidad y descubre todo lo que GW Fan Hub tiene para ofrecerte.</div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📝</div>
+      <div class="feature-title">Publica posts</div>
+      <div class="feature-desc">Comparte tus mejores jugadas, builds, estrategias y momentos épicos con la comunidad.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon purple">💬</div>
+      <div class="feature-title">Comenta y debate</div>
+      <div class="feature-desc">Interactúa con otros jugadores, responde comentarios y participa en debates del juego.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon yellow">🏆</div>
+      <div class="feature-title">Sube de rango</div>
+      <div class="feature-desc">De Semilla a Leyenda — tu actividad en la comunidad te hace crecer. Comandante y Leyenda solo por admins.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon blue">🌱</div>
+      <div class="feature-title">Explora personajes</div>
+      <div class="feature-desc">Descubre todas las clases de GW1 y GW2 con stats, roles y descripciones detalladas.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📖</div>
+      <div class="feature-title">Lee y crea guías</div>
+      <div class="feature-desc">Aprende de los mejores o comparte tus conocimientos creando guías para la comunidad.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon purple">🖼️</div>
+      <div class="feature-title">Galería de imágenes</div>
+      <div class="feature-desc">Explora capturas, fan art y momentos épicos compartidos por la comunidad.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FACCIONES -->
+<div class="factions-section">
+  <div class="factions-inner">
+    <div class="section-tag">⚔️ Elige tu bando</div>
+    <div class="section-title">¿Plantas o <span>Zombies</span>?</div>
+    <div class="section-desc">Cada facción tiene su propia identidad. ¿Con quién te identificas más?</div>
+    <div class="factions-grid">
+      <a href="/usuarios/register/" class="faction-card-big plant">
+        <span class="faction-big-emoji">🌱</span>
+        <div class="faction-big-title">Plantas</div>
+        <div class="faction-big-desc">Defiende el jardín con Peashooter, Sunflower, Cactus y más. La resistencia verde nunca se rinde.</div>
+        <span class="faction-big-btn">Unirme a Plantas →</span>
+      </a>
+      <a href="/usuarios/register/" class="faction-card-big zombie">
+        <span class="faction-big-emoji">🧟</span>
+        <div class="faction-big-title">Zombies</div>
+        <div class="faction-big-desc">Invade con Scientist, Engineer, All-Star y más. El ejército zombie conquista todo a su paso.</div>
+        <span class="faction-big-btn">Unirme a Zombies →</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- RANGOS -->
+<div class="ranking-section">
+  <div class="section-tag">🏅 Sistema de rangos</div>
+  <div class="section-title">Demuestra tu <span>valía</span></div>
+  <div class="section-desc">Cuanto más participes, más subirás. Los mejores guerreros alcanzan el rango Leyenda.</div>
+  <div class="ranking-grid">
+    <div class="ranking-card">
+      <div class="ranking-card-title">🏆 Rangos disponibles</div>
+      <div class="rank-row">
+        <span class="rank-pos gold">1</span>
+        <span class="rank-emoji">👑</span>
+        <div class="rank-info"><div class="rank-name-text">Leyenda</div><div class="rank-sub">Solo admins</div></div>
+        <span class="rank-val" style="color:#ef4444;">Admin</span>
+      </div>
+      <div class="rank-row">
+        <span class="rank-pos silver">2</span>
+        <span class="rank-emoji">🎖️</span>
+        <div class="rank-info"><div class="rank-name-text">Comandante</div><div class="rank-sub">Solo admins</div></div>
+        <span class="rank-val" style="color:#ef4444;">Admin</span>
+      </div>
+      <div class="rank-row">
+        <span class="rank-pos bronze">3</span>
+        <span class="rank-emoji">⚔️</span>
+        <div class="rank-info"><div class="rank-name-text">Guerrero</div><div class="rank-sub">10+ posts</div></div>
+        <span class="rank-val">10+</span>
+      </div>
+      <div class="rank-row">
+        <span class="rank-pos">4</span>
+        <span class="rank-emoji">🌻</span>
+        <div class="rank-info"><div class="rank-name-text">Girasol</div><div class="rank-sub">3+ posts</div></div>
+        <span class="rank-val">3+</span>
+      </div>
+      <div class="rank-row">
+        <span class="rank-pos">5</span>
+        <span class="rank-emoji">🌱</span>
+        <div class="rank-info"><div class="rank-name-text">Semilla</div><div class="rank-sub">Nuevo usuario</div></div>
+        <span class="rank-val" style="color:var(--muted);">Nuevo</span>
+      </div>
+    </div>
+    <div class="ranking-card">
+      <div class="ranking-card-title">⭐ Distintivos especiales</div>
+      <div class="rank-row">
+        <span class="rank-pos gold">★</span>
+        <span style="display:inline-flex;">
+          <svg viewBox="0 0 24 24" width="22" height="22">
+            <path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/>
+            <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/>
+          </svg>
+        </span>
+        <div class="rank-info"><div class="rank-name-text">Admin</div><div class="rank-sub">Badge dorado exclusivo</div></div>
+        <span class="rank-val" style="color:#FFD700;">Staff</span>
+      </div>
+      <div class="rank-row">
+        <span class="rank-pos" style="color:#1d9bf0;">✓</span>
+        <span style="display:inline-flex;">
+          <svg viewBox="0 0 24 24" width="22" height="22">
+            <path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/>
+            <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/>
+          </svg>
+        </span>
+        <div class="rank-info"><div class="rank-name-text">Verificado</div><div class="rank-sub">Badge azul — otorgado por admins</div></div>
+        <span class="rank-val" style="color:#1d9bf0;">VIP</span>
+      </div>
+      <div class="rank-row" style="border:none;padding-top:1rem;">
+        <div style="font-size:0.82rem;color:var(--muted);line-height:1.6;">
+          Los badges verificados son otorgados por los administradores a usuarios destacados de la comunidad.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-title">¿Listo para unirte al <span>jardín</span>?</div>
+    <div class="cta-desc">Crea tu cuenta gratis, elige tu facción y empieza a publicar. La comunidad te espera.</div>
+    <div class="cta-actions">
+      <a href="/usuarios/register/" class="btn-primary">🌱 Crear cuenta gratis</a>
+      <a href="/foro/" class="btn-ghost">Ver el foro →</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function createSun() {
+  const sun = document.createElement('div');
+  sun.style.cssText = `position:fixed;z-index:0;font-size:1.5rem;pointer-events:none;left:${10+Math.random()*80}vw;top:-60px;animation:fallSun ${10+Math.random()*10}s linear forwards;opacity:0;`;
+  sun.textContent = Math.random() > 0.5 ? '☀️' : '🌻';
+  document.body.appendChild(sun);
+  setTimeout(() => sun.remove(), 25000);
+}
+const style = document.createElement('style');
+style.textContent = `@keyframes fallSun{0%{transform:translateY(-60px);opacity:0}10%{opacity:0.3}90%{opacity:0.3}100%{transform:translateY(100vh);opacity:0}}`;
+document.head.appendChild(style);
+setInterval(createSun, 4000);
+createSun();
+</script>
+{% endblock %}

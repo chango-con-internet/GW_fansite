@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Perfil - Garden Warfare{% endblock %}
+
+{% block extra_styles %}
+.editar-wrap {
+  max-width: 600px; margin: 2rem auto; padding: 0 1rem;
+}
+
+.editar-header {
+  margin-bottom: 1.5rem;
+}
+.editar-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.8rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 0.3rem;
+}
+.editar-title span { color: var(--green); }
+.editar-sub { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
+
+.editar-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 2rem;
+}
+
+/* AVATAR SECTION */
+.avatar-section {
+  display: flex; align-items: center; gap: 1.5rem;
+  margin-bottom: 2rem; padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.avatar-preview {
+  width: 90px; height: 90px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(34,197,94,0.12); border: 3px solid rgba(34,197,94,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; overflow: hidden; position: relative;
+}
+.avatar-preview img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+}
+.avatar-upload-area {}
+.avatar-upload-title {
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+  color: #e5e7eb; margin-bottom: 6px;
+}
+.avatar-upload-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem;
+  padding: 7px 14px; border-radius: 10px; cursor: pointer;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  color: var(--green); transition: all 0.15s; position: relative;
+}
+.avatar-upload-btn:hover { background: rgba(34,197,94,0.2); }
+.avatar-upload-btn input {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+}
+.avatar-upload-sub { font-size: 0.72rem; color: var(--muted); font-weight: 700; margin-top: 5px; }
+
+/* FORM */
+.form-group { margin-bottom: 1.2rem; }
+.form-label {
+  font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+  color: var(--green); letter-spacing: 1px; display: block; margin-bottom: 6px;
+}
+.form-input, .form-textarea {
+  width: 100%; padding: 10px 14px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  border-radius: 10px; color: #e5e7eb;
+  font-family: 'Nunito', sans-serif; font-size: 0.92rem;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus {
+  border-color: rgba(34,197,94,0.4);
+  background: rgba(255,255,255,0.07);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
+.form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+.char-count { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-align: right; margin-top: 4px; }
+
+/* FACCION SELECTOR */
+.faccion-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.faccion-opt {
+  padding: 12px 8px; border-radius: 12px; cursor: pointer;
+  border: 2px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  text-align: center; transition: all 0.15s;
+}
+.faccion-opt input { display: none; }
+.faccion-opt:has(input:checked).plant {
+  border-color: var(--green); background: rgba(34,197,94,0.12);
+}
+.faccion-opt:has(input:checked).zombie {
+  border-color: #a855f7; background: rgba(168,85,247,0.12);
+}
+.faccion-opt:has(input:checked).neutral {
+  border-color: var(--yellow); background: rgba(251,191,36,0.12);
+}
+.faccion-emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
+.faccion-label {
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem; color: #9ca3af;
+  display: block;
+}
+.faccion-opt:has(input:checked).plant .faccion-label { color: var(--green); }
+.faccion-opt:has(input:checked).zombie .faccion-label { color: #a855f7; }
+.faccion-opt:has(input:checked).neutral .faccion-label { color: var(--yellow); }
+
+/* ACTIONS */
+.form-actions { display: flex; gap: 10px; margin-top: 1.8rem; }
+.btn-save {
+  flex: 1; padding: 13px;
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem; letter-spacing: 1px;
+  background: var(--green); border: none; border-radius: 12px;
+  color: #fff; cursor: pointer;
+  box-shadow: 0 6px 20px var(--green-glow); transition: all 0.2s;
+}
+.btn-save:hover { background: var(--green-dark); transform: translateY(-2px); }
+.btn-save:active { transform: translateY(1px); }
+.btn-cancel {
+  padding: 13px 20px;
+  font-family: 'Fredoka One', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: transparent; border: 1px solid var(--border); border-radius: 12px;
+  color: var(--muted); text-decoration: none; text-align: center;
+  transition: all 0.15s;
+}
+.btn-cancel:hover { border-color: rgba(255,255,255,0.15); color: #e5e7eb; }
+{% endblock %}
+
+{% block content %}
+<div class="editar-wrap">
+  <div class="editar-header">
+    <div class="editar-title">✏️ Editar <span>Perfil</span></div>
+    <div class="editar-sub">Personaliza tu perfil de guerrero</div>
+  </div>
+
+  <div class="editar-card">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- AVATAR -->
+      <div class="avatar-section">
+        <div class="avatar-preview" id="avatar-preview">
+          {% if perfil.avatar %}
+          <img src="{{ perfil.avatar.url }}" alt="Avatar" id="avatar-img">
+          {% else %}
+          <span id="avatar-emoji">
+            {% if perfil.faccion == 'planta' %}🌱
+            {% elif perfil.faccion == 'zombie' %}🧟
+            {% else %}⚔️{% endif %}
+          </span>
+          {% endif %}
+        </div>
+        <div class="avatar-upload-area">
+          <div class="avatar-upload-title">Foto de perfil</div>
+          <label class="avatar-upload-btn">
+            📸 Cambiar avatar
+            <input type="file" name="avatar" accept="image/*" onchange="previewAvatar(this)">
+          </label>
+          <div class="avatar-upload-sub">PNG, JPG • Max 2MB</div>
+        </div>
+      </div>
+
+      <!-- BIO -->
+      <div class="form-group">
+        <label class="form-label">📝 Bio</label>
+        <textarea name="bio" class="form-textarea" placeholder="Cuéntanos algo sobre ti..." maxlength="300" id="bio-input">{{ perfil.bio }}</textarea>
+        <div class="char-count"><span id="bio-count">{{ perfil.bio|length }}</span>/300</div>
+      </div>
+
+      <!-- FACCION -->
+      <div class="form-group">
+        <label class="form-label">⚔️ Facción</label>
+        <div class="faccion-grid">
+          <label class="faccion-opt plant">
+            <input type="radio" name="faccion" value="planta" {% if perfil.faccion == 'planta' %}checked{% endif %}>
+            <span class="faccion-emoji">🌱</span>
+            <span class="faccion-label">Plantas</span>
+          </label>
+          <label class="faccion-opt zombie">
+            <input type="radio" name="faccion" value="zombie" {% if perfil.faccion == 'zombie' %}checked{% endif %}>
+            <span class="faccion-emoji">🧟</span>
+            <span class="faccion-label">Zombies</span>
+          </label>
+          <label class="faccion-opt neutral">
+            <input type="radio" name="faccion" value="neutral" {% if perfil.faccion == 'neutral' %}checked{% endif %}>
+            <span class="faccion-emoji">⚔️</span>
+            <span class="faccion-label">Neutral</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-save">💾 Guardar cambios</button>
+        <a href="/usuarios/perfil/{{ request.user.username }}/" class="btn-cancel">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.getElementById('bio-input').addEventListener('input', function() {
+    document.getElementById('bio-count').textContent = this.value.length;
+  });
+
+  function previewAvatar(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('avatar-preview');
+        preview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+{% endblock %}

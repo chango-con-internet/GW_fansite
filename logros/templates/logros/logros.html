@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}Logros de {{ user_perfil.username }} - Garden Warfare{% endblock %}
+
+{% block extra_styles %}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.logros-wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+
+.logros-hero {
+  text-align: center; padding: 2rem 0 1.5rem; position: relative;
+}
+.logros-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(251,191,36,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.logros-title {
+  font-family: 'Fredoka One', cursive; font-size: 2rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 0.3rem;
+  position: relative; z-index: 1;
+}
+.logros-title span { color: var(--yellow); }
+.logros-sub { font-size: 0.82rem; color: var(--muted); font-weight: 700; position: relative; z-index: 1; }
+
+/* STATS */
+.logros-stats {
+  display: flex; gap: 1rem; justify-content: center;
+  margin-bottom: 2rem; flex-wrap: wrap;
+}
+.logro-stat {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 0.8rem 1.5rem; text-align: center;
+}
+.logro-stat-num {
+  font-family: 'Fredoka One', cursive; font-size: 1.5rem;
+  color: var(--yellow); display: block;
+}
+.logro-stat-label { font-size: 0.68rem; color: var(--muted); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+/* CATEGORIAS */
+.categoria-section { margin-bottom: 2rem; }
+.categoria-title {
+  font-family: 'Fredoka One', cursive; font-size: 0.95rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+}
+.categoria-count {
+  font-size: 0.68rem; background: rgba(34,197,94,0.15);
+  color: var(--green); padding: 2px 8px; border-radius: 20px; font-weight: 800;
+}
+
+/* GRID DE MEDALLAS */
+.medallas-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.8rem;
+}
+
+.medalla-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.2rem; text-align: center;
+  transition: all 0.2s; position: relative; overflow: hidden;
+}
+.medalla-card.obtenida {
+  border-color: rgba(251,191,36,0.3);
+  background: rgba(251,191,36,0.05);
+}
+.medalla-card.obtenida:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+.medalla-card.bloqueada { opacity: 0.4; filter: grayscale(1); }
+
+.medalla-brillo {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--yellow); opacity: 0;
+}
+.medalla-card.obtenida .medalla-brillo { opacity: 1; }
+
+.medalla-emoji { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+.medalla-nombre {
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem;
+  color: #e5e7eb; margin-bottom: 0.3rem; letter-spacing: 0.5px;
+}
+.medalla-desc { font-size: 0.68rem; color: var(--muted); line-height: 1.4; margin-bottom: 0.5rem; }
+.medalla-fecha { font-size: 0.62rem; color: var(--yellow); font-weight: 800; }
+.medalla-bloqueada-txt { font-size: 0.62rem; color: var(--muted); font-weight: 800; }
+
+.medalla-manual {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 6px; border-radius: 6px;
+  background: rgba(251,191,36,0.15); color: var(--yellow);
+  display: inline-block; margin-bottom: 0.3rem;
+}
+
+/* ADMIN PANEL */
+.admin-otorgar {
+  background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.15);
+  border-radius: 16px; padding: 1.2rem; margin-bottom: 2rem;
+}
+.admin-otorgar-title {
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+  color: var(--yellow); margin-bottom: 0.8rem; letter-spacing: 0.5px;
+}
+.admin-medallas { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn-otorgar {
+  font-family: 'Fredoka One', cursive; font-size: 0.75rem;
+  padding: 5px 12px; border-radius: 8px; text-decoration: none;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  color: var(--green); transition: all 0.15s;
+}
+.btn-otorgar:hover { background: rgba(34,197,94,0.2); }
+.btn-quitar {
+  font-family: 'Fredoka One', cursive; font-size: 0.75rem;
+  padding: 5px 12px; border-radius: 8px; text-decoration: none;
+  background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
+  color: #f87171; transition: all 0.15s;
+}
+.btn-quitar:hover { background: rgba(239,68,68,0.2); }
+{% endblock %}
+
+{% block content %}
+<div class="logros-wrap">
+
+  <div class="logros-hero">
+    <div class="logros-title">🏅 Logros de <span>{{ user_perfil.username }}</span></div>
+    <div class="logros-sub">Medallas ganadas en la comunidad GW Fan</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="logros-stats">
+    <div class="logro-stat">
+      <span class="logro-stat-num">{{ logros.count }}</span>
+      <span class="logro-stat-label">Obtenidas</span>
+    </div>
+    <div class="logro-stat">
+      <span class="logro-stat-num">{{ todas.count }}</span>
+      <span class="logro-stat-label">Total</span>
+    </div>
+    <div class="logro-stat">
+      <span class="logro-stat-num">{{ logros.count }}/{{ todas.count }}</span>
+      <span class="logro-stat-label">Completado</span>
+    </div>
+  </div>
+
+  <!-- PANEL ADMIN -->
+  {% if request.user.is_staff and request.user != user_perfil %}
+  <div class="admin-otorgar">
+    <div class="admin-otorgar-title">⭐ Panel Admin — Otorgar medallas manuales</div>
+    <div class="admin-medallas">
+      {% for medalla in todas %}
+      {% if medalla.tipo == 'manual' %}
+        {% if medalla.pk in logros_ids %}
+        <a href="/logros/{{ user_perfil.username }}/quitar/{{ medalla.pk }}/" class="btn-quitar">
+          {{ medalla.emoji }} Quitar {{ medalla.nombre }}
+        </a>
+        {% else %}
+        <a href="/logros/{{ user_perfil.username }}/otorgar/{{ medalla.pk }}/" class="btn-otorgar">
+          {{ medalla.emoji }} Dar {{ medalla.nombre }}
+        </a>
+        {% endif %}
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- MEDALLAS POR CATEGORIA -->
+  {% for cat_key, cat_nombre in categorias %}
+  <div class="categoria-section">
+    <div class="categoria-title">
+      {{ cat_nombre }}
+      <span class="categoria-count">
+        {% for m in todas %}{% if m.categoria == cat_key %}{% if m.pk in logros_ids %}✓{% endif %}{% endif %}{% endfor %}
+      </span>
+    </div>
+    <div class="medallas-grid">
+      {% for medalla in todas %}
+      {% if medalla.categoria == cat_key %}
+      <div class="medalla-card {% if medalla.pk in logros_ids %}obtenida{% else %}bloqueada{% endif %}">
+        <div class="medalla-brillo"></div>
+        {% if medalla.tipo == 'manual' %}
+        <span class="medalla-manual">Admin</span>
+        {% endif %}
+        <span class="medalla-emoji">{{ medalla.emoji }}</span>
+        <div class="medalla-nombre">{{ medalla.nombre }}</div>
+        <div class="medalla-desc">{{ medalla.descripcion }}</div>
+        {% if medalla.pk in logros_ids %}
+        {% for logro in logros %}
+        {% if logro.medalla.pk == medalla.pk %}
+        <div class="medalla-fecha">✅ {{ logro.fecha|date:"d/m/Y" }}</div>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <div class="medalla-bloqueada-txt">🔒 No obtenida</div>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+
+</div>
+{% endblock %}

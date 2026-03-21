@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}Usuarios - Panel Admin{% endblock %}
+
+{% block extra_styles %}
+.panel-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+}
+.panel-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #e5e7eb; letter-spacing: 1px; }
+.panel-title span { color: var(--green); }
+
+.panel-nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.panel-nav-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem;
+  padding: 7px 14px; border-radius: 10px; text-decoration: none;
+  border: 1px solid var(--border); color: var(--muted); background: transparent; transition: all 0.15s;
+}
+.panel-nav-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.15); }
+.panel-nav-btn.active { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green); }
+
+.tabla-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+
+.tabla-header {
+  padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tabla-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #e5e7eb; letter-spacing: 1px; }
+.tabla-count { font-size: 0.72rem; color: var(--muted); font-weight: 800; }
+
+table { width: 100%; border-collapse: collapse; }
+th {
+  padding: 10px 16px; text-align: left;
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+td {
+  padding: 12px 16px; font-size: 0.85rem; color: #9ca3af;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+.user-cell { display: flex; align-items: center; gap: 10px; }
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.2);
+  display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
+}
+.user-name { font-family: 'Fredoka One', cursive; color: #e5e7eb; font-size: 0.88rem; }
+.user-email { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
+
+.badge {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 6px; display: inline-block;
+}
+.badge-active { background: rgba(34,197,94,0.15); color: #86efac; }
+.badge-banned { background: rgba(239,68,68,0.15); color: #fca5a5; }
+.badge-staff { background: rgba(251,191,36,0.15); color: #fde68a; }
+.badge-planta { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-zombie { background: rgba(168,85,247,0.12); color: #c4b5fd; }
+.badge-neutral { background: rgba(255,255,255,0.08); color: #9ca3af; }
+
+.action-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.72rem; letter-spacing: 0.5px;
+  padding: 5px 10px; border-radius: 8px; text-decoration: none; cursor: pointer;
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  transition: all 0.15s; display: inline-block; margin-right: 4px;
+}
+.action-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.2); }
+.action-btn.danger { border-color: rgba(239,68,68,0.2); color: #f87171; }
+.action-btn.danger:hover { background: rgba(239,68,68,0.1); }
+.action-btn.success { border-color: rgba(34,197,94,0.2); color: var(--green); }
+.action-btn.success:hover { background: rgba(34,197,94,0.1); }
+
+.rango-form { display: flex; align-items: center; gap: 6px; }
+.rango-select {
+  font-family: 'Fredoka One', cursive; font-size: 0.72rem;
+  padding: 4px 8px; border-radius: 8px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  color: #9ca3af; outline: none;
+}
+.rango-select option { background: #0d140d; }
+.rango-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.72rem;
+  padding: 4px 10px; border-radius: 8px; cursor: pointer;
+  background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3);
+  color: var(--green); transition: all 0.15s;
+}
+.rango-btn:hover { background: rgba(34,197,94,0.25); }
+{% endblock %}
+
+{% block content %}
+<div class="panel-wrap">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title">👥 Gestionar <span>Usuarios</span></div>
+    </div>
+    <div class="panel-nav">
+      <a href="/panel/" class="panel-nav-btn">📊 Dashboard</a>
+      <a href="/panel/usuarios/" class="panel-nav-btn active">👥 Usuarios</a>
+      <a href="/panel/posts/" class="panel-nav-btn">📝 Posts</a>
+      <a href="/panel/contenido/" class="panel-nav-btn">🌱 Contenido</a>
+    </div>
+  </div>
+
+  <div class="tabla-card">
+    <div class="tabla-header">
+      <div class="tabla-title">Todos los usuarios</div>
+      <div class="tabla-count">{{ usuarios.count }} usuarios en total</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Facción</th>
+          <th>Rango</th>
+          <th>Estado</th>
+          <th>Registro</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in usuarios %}
+        <tr>
+          <td>
+            <div class="user-cell">
+              <div class="user-avatar">
+                {% if user.perfil.faccion == 'planta' %}🌱
+                {% elif user.perfil.faccion == 'zombie' %}🧟
+                {% else %}⚔️{% endif %}
+              </div>
+              <div>
+                <div class="user-name">{{ user.username }}</div>
+                <div class="user-email">{{ user.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            {% if user.perfil %}
+            <span class="badge badge-{{ user.perfil.faccion }}">{{ user.perfil.get_faccion_display }}</span>
+            {% else %} — {% endif %}
+          </td>
+          <td>
+            {% if user.perfil %}
+            <form class="rango-form" method="POST" action="/panel/usuarios/{{ user.pk }}/rango/">
+              {% csrf_token %}
+              <select name="rango" class="rango-select">
+                <option value="semilla" {% if user.perfil.rango == 'semilla' %}selected{% endif %}>🌱 Semilla</option>
+                <option value="girasol" {% if user.perfil.rango == 'girasol' %}selected{% endif %}>🌻 Girasol</option>
+                <option value="guerrero" {% if user.perfil.rango == 'guerrero' %}selected{% endif %}>⚔️ Guerrero</option>
+                <option value="comandante" {% if user.perfil.rango == 'comandante' %}selected{% endif %}>🎖️ Comandante</option>
+                <option value="leyenda" {% if user.perfil.rango == 'leyenda' %}selected{% endif %}>👑 Leyenda</option>
+              </select>
+              <button type="submit" class="rango-btn">✓</button>
+            </form>
+            {% else %} — {% endif %}
+          </td>
+          <td>
+            {% if user.is_staff %}
+            <span class="badge badge-staff">⭐ Staff</span>
+            {% elif user.is_active %}
+            <span class="badge badge-active">Activo</span>
+            {% else %}
+            <span class="badge badge-banned">Baneado</span>
+            {% endif %}
+          </td>
+          <td>{{ user.date_joined|date:"d/m/Y" }}</td>
+          <td>
+            {% if not user.is_superuser %}
+            <a href="/panel/usuarios/{{ user.pk }}/banear/" class="action-btn {% if user.is_active %}danger{% else %}success{% endif %}">
+              {% if user.is_active %}🚫 Banear{% else %}✅ Activar{% endif %}
+            </a>
+            {% endif %}
+            <a href="/usuarios/perfil/{{ user.username }}/" class="action-btn">👁️ Ver</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted);">No hay usuarios</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+
+{% block title %}Clasificación - Garden Warfare{% endblock %}
+
+{% block extra_styles %}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.ranking-wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+
+.ranking-hero {
+  text-align: center; padding: 2.5rem 0 2rem; position: relative;
+}
+.ranking-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(251,191,36,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ranking-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 20px; padding: 4px 14px;
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--yellow); margin-bottom: 1rem;
+  position: relative; z-index: 1;
+}
+.ranking-title {
+  font-family: 'Fredoka One', cursive; font-size: 2.5rem;
+  color: #e5e7eb; letter-spacing: 2px; margin-bottom: 0.5rem;
+  position: relative; z-index: 1;
+}
+.ranking-title span { color: var(--yellow); }
+.ranking-sub { font-size: 0.85rem; color: var(--muted); font-weight: 700; position: relative; z-index: 1; }
+
+/* TOP 3 */
+.top3 {
+  display: grid; grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 1rem; margin-bottom: 2rem; align-items: end;
+}
+@media (max-width: 600px) { .top3 { grid-template-columns: 1fr; } }
+
+.top3-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.5rem 1rem; text-align: center;
+  text-decoration: none; color: inherit; transition: all 0.2s; position: relative;
+}
+.top3-card:hover { transform: translateY(-4px); }
+.top3-card.gold { border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.05); }
+.top3-card.silver { border-color: rgba(192,192,192,0.3); background: rgba(192,192,192,0.05); }
+.top3-card.bronze { border-color: rgba(205,127,50,0.3); background: rgba(205,127,50,0.05); }
+
+.top3-pos { font-family: 'Fredoka One', cursive; font-size: 2rem; margin-bottom: 0.8rem; display: block; }
+.top3-avatar {
+  width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.8rem;
+  background: rgba(34,197,94,0.12); border: 3px solid rgba(34,197,94,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; overflow: hidden;
+}
+.top3-card.gold .top3-avatar { border-color: rgba(255,215,0,0.5); }
+.top3-card.silver .top3-avatar { border-color: rgba(192,192,192,0.5); }
+.top3-card.bronze .top3-avatar { border-color: rgba(205,127,50,0.5); }
+.top3-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+.top3-name {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: #e5e7eb; margin-bottom: 4px;
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+}
+.top3-rango { font-size: 0.72rem; color: var(--muted); font-weight: 800; margin-bottom: 0.5rem; }
+.top3-poder {
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+  color: var(--yellow); margin-bottom: 0.5rem;
+}
+.top3-stats { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.top3-stat {
+  font-size: 0.72rem; font-weight: 800; color: var(--muted);
+  background: rgba(255,255,255,0.05); border-radius: 20px; padding: 3px 10px;
+}
+
+/* TABLA */
+.ranking-table {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+
+.ranking-header {
+  display: grid;
+  grid-template-columns: 60px 1fr 90px 75px 75px 75px 110px;
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted);
+  align-items: center;
+}
+
+.ranking-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 90px 75px 75px 75px 110px;
+  padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--border);
+  align-items: center; transition: background 0.15s;
+  text-decoration: none; color: inherit;
+}
+.ranking-row:last-child { border-bottom: none; }
+.ranking-row:hover { background: rgba(255,255,255,0.03); }
+.ranking-row.top1 { background: rgba(255,215,0,0.04); }
+.ranking-row.top2 { background: rgba(192,192,192,0.04); }
+.ranking-row.top3b { background: rgba(205,127,50,0.04); }
+.ranking-row.yo { background: rgba(34,197,94,0.06); border-left: 2px solid var(--green); }
+
+.col-pos {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: var(--muted); text-align: center; width: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.col-pos.gold { color: #FFD700; font-size: 1.2rem; }
+.col-pos.silver { color: #C0C0C0; font-size: 1.2rem; }
+.col-pos.bronze { color: #CD7F32; font-size: 1.2rem; }
+
+.col-user { display: flex; align-items: center; gap: 10px; }
+.row-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; overflow: hidden;
+}
+.row-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.row-name {
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+  color: #e5e7eb; display: flex; align-items: center; gap: 3px;
+}
+.row-faccion { font-size: 0.65rem; color: var(--muted); font-weight: 700; margin-top: 1px; }
+
+.col-center {
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+  text-align: center; display: flex; align-items: center; justify-content: center;
+}
+.col-poder { color: var(--yellow); }
+.col-nivel { color: #60a5fa; }
+.col-posts { color: var(--green); }
+.col-likes { color: #f87171; }
+.col-rango {
+  font-size: 0.65rem; font-weight: 800;
+  background: rgba(255,215,0,0.1); color: var(--yellow);
+  padding: 3px 8px; border-radius: 20px; text-align: center;
+  white-space: nowrap; display: flex; align-items: center; justify-content: center;
+}
+
+.empty-ranking {
+  text-align: center; padding: 3rem;
+  font-family: 'Fredoka One', cursive; color: var(--muted); font-size: 1rem;
+}
+
+/* LEYENDA */
+.ranking-leyenda {
+  display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.leyenda-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.72rem; color: var(--muted); font-weight: 800;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 12px;
+}
+{% endblock %}
+
+{% block content %}
+<div class="ranking-wrap">
+
+  <div class="ranking-hero">
+    <div class="ranking-tag">🏆 Tabla de clasificación</div>
+    <div class="ranking-title">TOP <span>GUERREROS</span></div>
+    <div class="ranking-sub">Clasificados por Poder de Batalla • posts×10 + likes×5 + comentarios×3</div>
+  </div>
+
+  <!-- LEYENDA -->
+  <div class="ranking-leyenda">
+    <div class="leyenda-item">📝 Post = 10 XP</div>
+    <div class="leyenda-item">❤️ Like recibido = 5 XP</div>
+    <div class="leyenda-item">💬 Comentario = 3 XP</div>
+    <div class="leyenda-item">🌻 Nivel = XP ÷ 100</div>
+  </div>
+
+  <!-- TOP 3 -->
+  {% if ranking|length >= 3 %}
+  <div class="top3">
+
+    {% with item=ranking.1 %}
+    <a href="/usuarios/perfil/{{ item.perfil.usuario.username }}/" class="top3-card silver">
+      <span class="top3-pos">🥈</span>
+      <div class="top3-avatar">
+        {% if item.perfil.avatar %}<img src="{{ item.perfil.avatar.url }}" alt="">
+        {% elif item.perfil.faccion == 'planta' %}🌱
+        {% elif item.perfil.faccion == 'zombie' %}🧟
+        {% else %}⚔️{% endif %}
+      </div>
+      <div class="top3-name">
+        {{ item.perfil.usuario.username }}
+        {% if item.perfil.usuario.is_staff %}
+        <span class="admin-badge-icon" title="Admin"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+        {% elif item.perfil.verificado %}
+        <span class="verificado-badge" title="Verificado"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+        {% endif %}
+      </div>
+      <div class="top3-rango">{{ item.perfil.get_rango_display }}</div>
+      <div class="top3-poder">⚔️ {{ item.poder }} XP</div>
+      <div class="top3-stats">
+        <span class="top3-stat">🌻 Nv.{{ item.nivel }}</span>
+        <span class="top3-stat">📝 {{ item.posts }}</span>
+        <span class="top3-stat">❤️ {{ item.likes }}</span>
+      </div>
+    </a>
+    {% endwith %}
+
+    {% with item=ranking.0 %}
+    <a href="/usuarios/perfil/{{ item.perfil.usuario.username }}/" class="top3-card gold">
+      <span class="top3-pos">🥇</span>
+      <div class="top3-avatar">
+        {% if item.perfil.avatar %}<img src="{{ item.perfil.avatar.url }}" alt="">
+        {% elif item.perfil.faccion == 'planta' %}🌱
+        {% elif item.perfil.faccion == 'zombie' %}🧟
+        {% else %}⚔️{% endif %}
+      </div>
+      <div class="top3-name">
+        {{ item.perfil.usuario.username }}
+        {% if item.perfil.usuario.is_staff %}
+        <span class="admin-badge-icon" title="Admin"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+        {% elif item.perfil.verificado %}
+        <span class="verificado-badge" title="Verificado"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+        {% endif %}
+      </div>
+      <div class="top3-rango">{{ item.perfil.get_rango_display }}</div>
+      <div class="top3-poder">⚔️ {{ item.poder }} XP</div>
+      <div class="top3-stats">
+        <span class="top3-stat">🌻 Nv.{{ item.nivel }}</span>
+        <span class="top3-stat">📝 {{ item.posts }}</span>
+        <span class="top3-stat">❤️ {{ item.likes }}</span>
+      </div>
+    </a>
+    {% endwith %}
+
+    {% with item=ranking.2 %}
+    <a href="/usuarios/perfil/{{ item.perfil.usuario.username }}/" class="top3-card bronze">
+      <span class="top3-pos">🥉</span>
+      <div class="top3-avatar">
+        {% if item.perfil.avatar %}<img src="{{ item.perfil.avatar.url }}" alt="">
+        {% elif item.perfil.faccion == 'planta' %}🌱
+        {% elif item.perfil.faccion == 'zombie' %}🧟
+        {% else %}⚔️{% endif %}
+      </div>
+      <div class="top3-name">
+        {{ item.perfil.usuario.username }}
+        {% if item.perfil.usuario.is_staff %}
+        <span class="admin-badge-icon" title="Admin"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+        {% elif item.perfil.verificado %}
+        <span class="verificado-badge" title="Verificado"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+        {% endif %}
+      </div>
+      <div class="top3-rango">{{ item.perfil.get_rango_display }}</div>
+      <div class="top3-poder">⚔️ {{ item.poder }} XP</div>
+      <div class="top3-stats">
+        <span class="top3-stat">🌻 Nv.{{ item.nivel }}</span>
+        <span class="top3-stat">📝 {{ item.posts }}</span>
+        <span class="top3-stat">❤️ {{ item.likes }}</span>
+      </div>
+    </a>
+    {% endwith %}
+
+  </div>
+  {% endif %}
+
+  <!-- TABLA COMPLETA -->
+  <div class="ranking-table">
+    <div class="ranking-header">
+      <div style="text-align:center;">#</div>
+      <div>Usuario</div>
+      <div style="text-align:center;">⚔️ Poder</div>
+      <div style="text-align:center;">🌻 Nivel</div>
+      <div style="text-align:center;">📝 Posts</div>
+      <div style="text-align:center;">❤️ Likes</div>
+      <div style="text-align:center;">Rango</div>
+    </div>
+
+    {% if ranking %}
+    {% for item in ranking %}
+    <a href="/usuarios/perfil/{{ item.perfil.usuario.username }}/"
+      class="ranking-row {% if forloop.counter == 1 %}top1{% elif forloop.counter == 2 %}top2{% elif forloop.counter == 3 %}top3b{% endif %} {% if request.user == item.perfil.usuario %}yo{% endif %}">
+
+      <div class="col-pos {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">
+        {% if forloop.counter == 1 %}🥇
+        {% elif forloop.counter == 2 %}🥈
+        {% elif forloop.counter == 3 %}🥉
+        {% else %}{{ forloop.counter }}{% endif %}
+      </div>
+
+      <div class="col-user">
+        <div class="row-avatar">
+          {% if item.perfil.avatar %}<img src="{{ item.perfil.avatar.url }}" alt="">
+          {% elif item.perfil.faccion == 'planta' %}🌱
+          {% elif item.perfil.faccion == 'zombie' %}🧟
+          {% else %}⚔️{% endif %}
+        </div>
+        <div>
+          <div class="row-name">
+            {{ item.perfil.usuario.username }}
+            {% if item.perfil.usuario.is_staff %}
+            <span class="admin-badge-icon" title="Admin"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+            {% elif item.perfil.verificado %}
+            <span class="verificado-badge" title="Verificado"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+            {% endif %}
+          </div>
+          <div class="row-faccion">{{ item.perfil.get_faccion_display }}</div>
+        </div>
+      </div>
+
+      <div class="col-center col-poder">{{ item.poder }}</div>
+      <div class="col-center col-nivel">Nv.{{ item.nivel }}</div>
+      <div class="col-center col-posts">{{ item.posts }}</div>
+      <div class="col-center col-likes">{{ item.likes }}</div>
+      <div class="col-rango">{{ item.perfil.get_rango_display }}</div>
+    </a>
+    {% endfor %}
+    {% else %}
+    <div class="empty-ranking">🌱 No hay usuarios aún</div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

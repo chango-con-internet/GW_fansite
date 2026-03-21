@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ user_perfil.username }} - Garden Warfare{% endblock %}
+
+{% block extra_styles %}
+.perfil-wrap { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+.perfil-hero {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden; margin-bottom: 1.2rem;
+}
+.perfil-banner {
+  height: 120px;
+  background: linear-gradient(135deg, #0d2d0d, #1a4d1a, #0d2d0d);
+  position: relative; overflow: hidden;
+}
+.perfil-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(34,197,94,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,197,94,0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+.perfil-banner-zombie { background: linear-gradient(135deg, #1a0d2d, #2d1a4d, #1a0d2d); }
+.perfil-banner-zombie::before {
+  background-image: linear-gradient(rgba(168,85,247,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168,85,247,0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+.perfil-info {
+  padding: 0 1.5rem 1.5rem;
+  display: flex; align-items: flex-end; gap: 1.2rem; position: relative;
+}
+.perfil-avatar-wrap { margin-top: -50px; flex-shrink: 0; }
+.perfil-avatar {
+  width: 100px; height: 100px; border-radius: 50%;
+  border: 4px solid var(--bg2); overflow: hidden;
+  background: rgba(34,197,94,0.12);
+  display: flex; align-items: center; justify-content: center; font-size: 3rem;
+}
+.perfil-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.perfil-details { flex: 1; padding-top: 0.8rem; }
+.perfil-username {
+  font-family: 'Fredoka One', cursive; font-size: 1.8rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 0.4rem;
+  display: flex; align-items: center; gap: 4px;
+}
+.perfil-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.perfil-badge {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+}
+.badge-planta { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
+.badge-zombie { background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.3); color: #c4b5fd; }
+.badge-neutral { background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.3); color: #fde68a; }
+.badge-rango { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); color: var(--yellow); }
+.perfil-bio { font-size: 0.88rem; color: #6b7280; line-height: 1.6; max-width: 500px; }
+.perfil-actions { display: flex; gap: 8px; align-items: center; padding-top: 0.8rem; flex-wrap: wrap; }
+.btn-editar {
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem; letter-spacing: 0.5px;
+  padding: 7px 16px; border-radius: 10px; text-decoration: none;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  color: var(--green); transition: all 0.15s;
+}
+.btn-editar:hover { background: rgba(34,197,94,0.2); }
+
+.xp-section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.2rem;
+  display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+}
+.xp-nivel {
+  font-family: 'Fredoka One', cursive; font-size: 2rem;
+  color: #60a5fa; flex-shrink: 0;
+  background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2);
+  border-radius: 12px; padding: 0.5rem 1rem; text-align: center; min-width: 80px;
+}
+.xp-nivel-label { font-size: 0.6rem; color: var(--muted); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.xp-info { flex: 1; min-width: 200px; }
+.xp-bar-label {
+  display: flex; justify-content: space-between;
+  font-size: 0.72rem; font-weight: 800; color: var(--muted); margin-bottom: 5px;
+}
+.xp-bar-label span:first-child { color: #60a5fa; }
+.xp-bar {
+  width: 100%; height: 8px; border-radius: 20px;
+  background: rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 0.4rem;
+}
+.xp-bar-fill {
+  height: 100%; border-radius: 20px;
+  background: linear-gradient(90deg, #60a5fa, #a855f7); transition: width 0.5s ease;
+}
+.xp-poder {
+  font-family: 'Fredoka One', cursive; font-size: 0.88rem;
+  color: var(--yellow); display: flex; align-items: center; gap: 5px;
+}
+
+.perfil-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1rem; margin-bottom: 1.2rem;
+}
+@media (max-width: 700px) { .perfil-stats { grid-template-columns: repeat(2, 1fr); } }
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem; text-align: center; transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: rgba(34,197,94,0.2); }
+.stat-num {
+  font-family: 'Fredoka One', cursive; font-size: 1.8rem;
+  color: var(--green); display: block; letter-spacing: 1px;
+}
+.stat-num.purple { color: #a855f7; }
+.stat-num.yellow { color: var(--yellow); }
+.stat-num.blue { color: #60a5fa; }
+.stat-label { font-size: 0.7rem; color: var(--muted); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+.medallas-mini {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.2rem;
+}
+.medalla-chip {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; cursor: help; transition: all 0.15s;
+}
+.medalla-chip:hover { transform: scale(1.2); z-index: 1; }
+.medalla-chip.especial {
+  border-color: rgba(251,191,36,0.4); background: rgba(251,191,36,0.08);
+  box-shadow: 0 0 10px rgba(251,191,36,0.2);
+}
+.medalla-chip.rara {
+  border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.08);
+  box-shadow: 0 0 10px rgba(168,85,247,0.2);
+}
+
+.section-title {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-count {
+  font-size: 0.7rem; background: rgba(34,197,94,0.15);
+  color: var(--green); padding: 2px 10px; border-radius: 20px; font-weight: 800;
+}
+.perfil-content { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.post-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.2rem; transition: all 0.2s;
+  text-decoration: none; display: block; color: inherit;
+}
+.post-card:hover { background: #111911; border-color: rgba(34,197,94,0.2); }
+.post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 0.6rem; }
+.post-badge {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 6px;
+}
+.badge-general { background: rgba(255,255,255,0.08); color: #9ca3af; }
+.badge-estrategia { background: rgba(239,68,68,0.12); color: #fca5a5; }
+.badge-builds { background: rgba(59,130,246,0.12); color: #93c5fd; }
+.badge-humor { background: rgba(251,191,36,0.12); color: #fde68a; }
+.badge-noticias { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-ambos { background: rgba(251,191,36,0.12); color: #fde68a; }
+.post-meta { font-size: 0.7rem; color: var(--muted); font-weight: 700; }
+.post-titulo { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #e5e7eb; margin-bottom: 0.4rem; }
+.post-content {
+  font-size: 0.85rem; color: #6b7280; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.8rem;
+}
+.post-footer { display: flex; gap: 12px; }
+.post-stat { font-size: 0.75rem; color: var(--muted); font-weight: 800; display: flex; align-items: center; gap: 4px; }
+.empty-posts {
+  text-align: center; padding: 3rem 2rem;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+}
+.empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; opacity: 0.5; }
+.empty-text { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #e5e7eb; margin-bottom: 0.3rem; }
+.empty-sub { font-size: 0.82rem; color: var(--muted); }
+{% endblock %}
+
+{% block content %}
+<div class="perfil-wrap">
+
+  <div class="perfil-hero">
+    <div class="perfil-banner {% if perfil.faccion == 'zombie' %}perfil-banner-zombie{% endif %}"></div>
+    <div class="perfil-info">
+      <div class="perfil-avatar-wrap">
+        <div class="perfil-avatar">
+          {% if perfil.avatar %}<img src="{{ perfil.avatar.url }}" alt="{{ user_perfil.username }}">
+          {% elif perfil.faccion == 'planta' %}🌱
+          {% elif perfil.faccion == 'zombie' %}🧟
+          {% else %}⚔️{% endif %}
+        </div>
+      </div>
+      <div style="flex:1;">
+        <div class="perfil-username">
+          {{ user_perfil.username }}
+          {% if user_perfil.is_staff %}
+          <span class="admin-badge-icon" title="Admin"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+          {% elif perfil.verificado %}
+          <span class="verificado-badge" title="Verificado"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+          {% endif %}
+        </div>
+        <div class="perfil-badges">
+          <span class="perfil-badge badge-{{ perfil.faccion }}">{{ perfil.get_faccion_display }}</span>
+          <span class="perfil-badge badge-rango">{{ perfil.get_rango_display }}</span>
+          {% if user_perfil.is_staff %}
+          <span class="perfil-badge" style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.3);color:#fde68a;">⭐ Staff</span>
+          {% endif %}
+        </div>
+        {% if perfil.bio %}<div class="perfil-bio">{{ perfil.bio }}</div>{% endif %}
+      </div>
+      <div class="perfil-actions">
+        {% if request.user == user_perfil %}
+        <a href="/usuarios/editar-perfil/" class="btn-editar">✏️ Editar perfil</a>
+        <a href="/logros/{{ user_perfil.username }}/" class="btn-editar" style="background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.2);color:var(--yellow);">🏅 Logros</a>
+        {% endif %}
+        {% if request.user != user_perfil and request.user.is_authenticated %}
+        <a href="/usuarios/mensajes/{{ user_perfil.username }}/" class="btn-editar" style="background:rgba(96,165,250,0.1);border-color:rgba(96,165,250,0.2);color:#60a5fa;">💬 Mensaje</a>
+        <a href="/logros/{{ user_perfil.username }}/" class="btn-editar" style="background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.2);color:var(--yellow);">🏅 Logros</a>
+        {% endif %}
+        {% if request.user.is_staff and request.user != user_perfil %}
+        <a href="/usuarios/verificar/{{ user_perfil.username }}/" class="btn-editar"
+          style="{% if perfil.verificado %}background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171;{% else %}background:rgba(29,155,240,0.1);border-color:rgba(29,155,240,0.3);color:#1d9bf0;{% endif %}">
+          {% if perfil.verificado %}❌ Quitar verificado
+          {% else %}<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:3px;"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg>Verificar{% endif %}
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- XP -->
+  <div class="xp-section">
+    <div class="xp-nivel">
+      <div>Nv.</div>
+      <div>{{ nivel }}</div>
+      <div class="xp-nivel-label">Nivel</div>
+    </div>
+    <div class="xp-info">
+      <div class="xp-bar-label">
+        <span>{{ xp }} XP</span>
+        <span>Próximo nivel {{ nivel|add:1 }} → {{ nivel|add:1 }}00 XP</span>
+      </div>
+      <div class="xp-bar">
+        <div class="xp-bar-fill" style="width:{% widthratio xp 100 100 %}%;"></div>
+      </div>
+      <div class="xp-poder">⚔️ Poder de Batalla: <strong>{{ poder }}</strong></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="perfil-stats">
+    <div class="stat-card">
+      <span class="stat-num">{{ posts.count }}</span>
+      <span class="stat-label">Posts</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num purple">{{ total_likes }}</span>
+      <span class="stat-label">Likes recibidos</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num yellow">{{ perfil.get_rango_display }}</span>
+      <span class="stat-label">Rango</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num blue">{{ perfil.fecha_registro|date:"Y" }}</span>
+      <span class="stat-label">Miembro desde</span>
+    </div>
+  </div>
+
+  <!-- MEDALLAS MINI -->
+  {% if medallas %}
+  <div class="medallas-mini">
+    <div class="section-title">
+      🏅 Medallas
+      <span class="section-count">{{ medallas.count }}</span>
+      <a href="/logros/{{ user_perfil.username }}/" style="font-size:0.72rem;color:var(--muted);font-weight:800;margin-left:auto;text-decoration:none;">Ver todas →</a>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      {% for logro in medallas %}
+      <div class="medalla-chip {% if logro.medalla.tipo == 'manual' %}especial{% endif %}"
+        title="{{ logro.medalla.nombre }} — {{ logro.medalla.descripcion }}">
+        {{ logro.medalla.emoji }}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- POSTS -->
+  <div class="perfil-content">
+    <div>
+      <div class="section-title">
+        📝 Posts de {{ user_perfil.username }}
+        <span class="section-count">{{ posts.count }}</span>
+      </div>
+      {% for post in posts %}
+      <a href="/foro/post/{{ post.pk }}/" class="post-card">
+        <div class="post-header">
+          <span class="post-badge badge-{{ post.categoria }}">{{ post.get_categoria_display }}</span>
+          <span class="post-badge badge-{{ post.faccion }}">{{ post.get_faccion_display }}</span>
+          <span class="post-meta">{{ post.fecha|timesince }} ago</span>
+        </div>
+        <div class="post-titulo">{{ post.titulo }}</div>
+        <div class="post-content">{{ post.contenido }}</div>
+        <div class="post-footer">
+          <span class="post-stat">❤️ {{ post.total_likes }}</span>
+          <span class="post-stat">💬 {{ post.total_comentarios }}</span>
+        </div>
+      </a>
+      {% empty %}
+      <div class="empty-posts">
+        <span class="empty-icon">🌱</span>
+        <div class="empty-text">Sin posts aún</div>
+        <div class="empty-sub">
+          {% if request.user == user_perfil %}
+          <a href="/foro/crear/" style="color:var(--green);text-decoration:none;font-weight:800;">¡Crea tu primer post!</a>
+          {% else %}{{ user_perfil.username }} no ha publicado nada aún.{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

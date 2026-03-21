@@ -1,0 +1,374 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Feed - Garden Warfare{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_styles %}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.feed-wrap { min-height: 100vh; background: var(--bg); }
+
+.feed-layout {
+  display: grid; grid-template-columns: 220px 1fr 220px;
+  gap: 1.2rem; max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem;
+}
+@media (max-width: 900px) {
+  .feed-layout { grid-template-columns: 1fr; }
+  .sidebar-left, .sidebar-right { display: none; }
+}
+
+.sidebar-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1rem; margin-bottom: 1rem;
+}
+.sidebar-title {
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--green); margin-bottom: 0.8rem; opacity: 0.7;
+}
+.sidebar-link {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--muted); font-size: 0.85rem;
+  font-weight: 700; padding: 7px 10px; border-radius: 10px;
+  transition: all 0.15s; margin-bottom: 2px;
+}
+.sidebar-link:hover { background: rgba(255,255,255,0.04); color: #e5e7eb; }
+.sidebar-link.active { background: rgba(34,197,94,0.1); color: var(--green); }
+
+.user-mini { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+.user-mini-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0; overflow: hidden; padding: 0;
+}
+.user-mini-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.user-mini-name { font-family: 'Fredoka One', cursive; color: #e5e7eb; font-size: 0.88rem; }
+.user-mini-rango { font-size: 0.68rem; color: var(--yellow); font-weight: 800; margin-top: 1px; }
+
+.new-post-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1rem; margin-bottom: 1rem; transition: border-color 0.2s;
+}
+.new-post-box:hover { border-color: rgba(34,197,94,0.2); }
+.new-post-input { display: flex; gap: 10px; align-items: center; }
+.new-post-avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; overflow: hidden; padding: 0;
+}
+.new-post-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.new-post-btn {
+  flex: 1; padding: 10px 16px; border-radius: 24px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Nunito', sans-serif; font-size: 0.88rem;
+  cursor: pointer; text-align: left; transition: all 0.2s; text-decoration: none; display: block;
+}
+.new-post-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(34,197,94,0.3); color: #9ca3af; }
+
+.filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.78rem; letter-spacing: 0.5px;
+  padding: 5px 12px; border-radius: 20px; cursor: pointer;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--muted); transition: all 0.15s; text-decoration: none;
+}
+.filter-btn:hover { border-color: rgba(34,197,94,0.3); color: #9ca3af; }
+.filter-btn.active { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green); }
+
+.post-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.2rem; margin-bottom: 0.8rem; transition: all 0.2s;
+}
+.post-card:hover { background: #111911; border-color: rgba(34,197,94,0.15); }
+
+.post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 0.8rem; }
+.post-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0; text-decoration: none; overflow: hidden; padding: 0;
+}
+.post-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.post-avatar.zombie { border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.12); }
+.post-user-info { flex: 1; }
+.post-username {
+  font-family: 'Fredoka One', cursive; color: #e5e7eb;
+  font-size: 0.92rem; text-decoration: none; letter-spacing: 0.5px;
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.post-username:hover { color: var(--green); }
+.post-meta { font-size: 0.7rem; color: var(--muted); font-weight: 700; margin-top: 1px; }
+
+.post-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+.post-badge {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 6px;
+}
+.badge-planta { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-zombie { background: rgba(168,85,247,0.12); color: #c4b5fd; }
+.badge-ambos { background: rgba(251,191,36,0.12); color: #fde68a; }
+.badge-general { background: rgba(255,255,255,0.08); color: #9ca3af; }
+.badge-estrategia { background: rgba(239,68,68,0.12); color: #fca5a5; }
+.badge-builds { background: rgba(59,130,246,0.12); color: #93c5fd; }
+.badge-humor { background: rgba(251,191,36,0.12); color: #fde68a; }
+.badge-noticias { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-rango { background: rgba(255,215,0,0.1); color: var(--yellow); }
+
+.post-titulo {
+  font-family: 'Fredoka One', cursive; font-size: 1.05rem;
+  color: #e5e7eb; margin-bottom: 0.4rem; letter-spacing: 0.5px;
+  text-decoration: none; display: block; transition: color 0.15s;
+}
+.post-titulo:hover { color: var(--green); }
+.post-content {
+  font-size: 0.88rem; color: #6b7280; line-height: 1.6; margin-bottom: 0.8rem;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.post-img {
+  width: 100%; border-radius: 10px; margin-bottom: 0.8rem;
+  max-height: 300px; object-fit: cover; border: 1px solid var(--border);
+}
+.post-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.post-action {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.75rem; font-weight: 800; color: var(--muted);
+  background: transparent; border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 12px; cursor: pointer;
+  transition: all 0.15s; text-decoration: none;
+}
+.post-action:hover { background: rgba(255,255,255,0.04); color: #9ca3af; }
+.post-action.like:hover { border-color: rgba(239,68,68,0.3); color: #f87171; }
+.post-action.like.liked { border-color: rgba(239,68,68,0.4); color: #f87171; background: rgba(239,68,68,0.08); }
+.post-action.comment:hover { border-color: rgba(34,197,94,0.3); color: var(--green); }
+
+.empty-feed {
+  text-align: center; padding: 5rem 2rem;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
+}
+.empty-feed-icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; opacity: 0.6; }
+.empty-feed-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #e5e7eb; margin-bottom: 0.5rem; }
+.empty-feed-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+.btn-crear {
+  display: inline-block; margin-top: 1.5rem;
+  font-family: 'Fredoka One', cursive; font-size: 0.9rem; letter-spacing: 1px;
+  padding: 10px 24px; border-radius: 12px;
+  background: var(--green); color: #fff; text-decoration: none;
+  box-shadow: 0 6px 20px var(--green-glow); transition: all 0.2s;
+}
+.btn-crear:hover { background: var(--green-dark); transform: translateY(-2px); }
+
+.rank-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.8rem;
+}
+.rank-item:last-child { border-bottom: none; }
+.rank-name { color: #9ca3af; font-weight: 700; }
+.rank-req { color: var(--yellow); font-weight: 800; font-size: 0.7rem; }
+
+.faction-card {
+  border-radius: 10px; padding: 10px; text-align: center; margin-bottom: 8px;
+  cursor: pointer; text-decoration: none; display: block; transition: all 0.15s;
+}
+.faction-card.plant { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+.faction-card.plant:hover { background: rgba(34,197,94,0.15); }
+.faction-card.zombie { background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); }
+.faction-card.zombie:hover { background: rgba(168,85,247,0.15); }
+.faction-name { font-family: 'Fredoka One', cursive; font-size: 0.88rem; }
+.faction-card.plant .faction-name { color: var(--green); }
+.faction-card.zombie .faction-name { color: #a855f7; }
+{% endblock %}
+
+{% block content %}
+<div class="feed-wrap">
+  <div class="feed-layout">
+
+    <div class="sidebar-left">
+      <div class="sidebar-card">
+        {% if request.user.is_authenticated %}
+        <div class="user-mini">
+          <div class="user-mini-avatar">
+            {% if request.user.perfil.avatar %}
+            <img src="{{ request.user.perfil.avatar.url }}" alt="{{ request.user.username }}">
+            {% elif request.user.perfil.faccion == 'planta' %}🌱
+            {% elif request.user.perfil.faccion == 'zombie' %}🧟
+            {% else %}⚔️{% endif %}
+          </div>
+          <div>
+            <div class="user-mini-name">{{ request.user.username }}</div>
+            <div class="user-mini-rango">{{ request.user.perfil.get_rango_display }}</div>
+          </div>
+        </div>
+        <a href="/usuarios/perfil/{{ request.user.username }}/" class="sidebar-link">👤 Mi perfil</a>
+        <a href="/foro/crear/" class="sidebar-link active">✏️ Crear post</a>
+        <a href="/usuarios/clasificacion/" class="sidebar-link">🏆 Clasificación</a>
+        <a href="/usuarios/logout/" class="sidebar-link" style="color:#f87171;">🚪 Salir</a>
+        {% else %}
+        <a href="/usuarios/login/" class="sidebar-link active">🔑 Iniciar sesión</a>
+        <a href="/usuarios/register/" class="sidebar-link" style="color:var(--green);">🌱 Registrarse</a>
+        {% endif %}
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-title">Explorar</div>
+        <a href="/personajes/" class="sidebar-link">🌱 Personajes</a>
+        <a href="/guias/" class="sidebar-link">📖 Guías</a>
+        <a href="/galeria/" class="sidebar-link">🖼️ Galería</a>
+      </div>
+    </div>
+
+    <div class="feed-center">
+      {% if request.user.is_authenticated %}
+      <div class="new-post-box">
+        <div class="new-post-input">
+          <div class="new-post-avatar">
+            {% if request.user.perfil.avatar %}
+            <img src="{{ request.user.perfil.avatar.url }}" alt="{{ request.user.username }}">
+            {% elif request.user.perfil.faccion == 'planta' %}🌱
+            {% elif request.user.perfil.faccion == 'zombie' %}🧟
+            {% else %}⚔️{% endif %}
+          </div>
+          <a href="/foro/crear/" class="new-post-btn">¿Qué está pasando en el jardín, {{ request.user.username }}?</a>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="filters">
+        <a href="/foro/" class="filter-btn {% if not categoria %}active{% endif %}">Todo</a>
+        <a href="?categoria=general" class="filter-btn {% if categoria == 'general' %}active{% endif %}">💬 General</a>
+        <a href="?categoria=estrategia" class="filter-btn {% if categoria == 'estrategia' %}active{% endif %}">⚔️ Estrategia</a>
+        <a href="?categoria=builds" class="filter-btn {% if categoria == 'builds' %}active{% endif %}">🔧 Builds</a>
+        <a href="?categoria=humor" class="filter-btn {% if categoria == 'humor' %}active{% endif %}">😄 Humor</a>
+        <a href="?categoria=noticias" class="filter-btn {% if categoria == 'noticias' %}active{% endif %}">📰 Noticias</a>
+      </div>
+
+      {% for post in posts %}
+      <div class="post-card">
+        <div class="post-header">
+          <a href="/usuarios/perfil/{{ post.autor.username }}/"
+            class="post-avatar {% if post.autor.perfil.faccion == 'zombie' %}zombie{% endif %}">
+            {% if post.autor.perfil.avatar %}
+            <img src="{{ post.autor.perfil.avatar.url }}" alt="{{ post.autor.username }}">
+            {% elif post.autor.perfil.faccion == 'planta' %}🌱
+            {% elif post.autor.perfil.faccion == 'zombie' %}🧟
+            {% else %}⚔️{% endif %}
+          </a>
+          <div class="post-user-info">
+            <a href="/usuarios/perfil/{{ post.autor.username }}/" class="post-username">
+              {{ post.autor.username }}
+              {% if post.autor.is_staff %}
+              <span class="admin-badge-icon" title="Admin"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+              {% elif post.autor.perfil.verificado %}
+              <span class="verificado-badge" title="Verificado"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
+              {% endif %}
+            </a>
+            <div class="post-meta">
+              {{ post.fecha|timesince }} ago
+              {% if post.autor.perfil %}
+              • <span class="post-badge badge-rango">{{ post.autor.perfil.get_rango_display }}</span>
+              {% endif %}
+            </div>
+            <div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px;">
+              {% for logro in post.autor.logros.all %}
+              {% if logro.medalla.tipo == 'manual' %}
+              <span title="{{ logro.medalla.nombre }}" style="font-size:0.8rem;cursor:help;">{{ logro.medalla.emoji }}</span>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="post-badges">
+            <span class="post-badge badge-{{ post.categoria }}">{{ post.get_categoria_display }}</span>
+            <span class="post-badge badge-{{ post.faccion }}">{{ post.get_faccion_display }}</span>
+          </div>
+        </div>
+
+        <a href="/foro/post/{{ post.pk }}/" class="post-titulo">{{ post.titulo }}</a>
+        <div class="post-content">{{ post.contenido }}</div>
+
+        {% if post.imagen %}
+        <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="post-img">
+        {% endif %}
+
+        <div class="post-actions">
+          <button class="post-action like {% if request.user in post.likes.all %}liked{% endif %}"
+            onclick="likePost({{ post.pk }}, this)">
+            ❤️ <span id="likes-{{ post.pk }}">{{ post.total_likes }}</span>
+          </button>
+          <a href="/foro/post/{{ post.pk }}/" class="post-action comment">💬 {{ post.total_comentarios }}</a>
+          <a href="/foro/post/{{ post.pk }}/" class="post-action">👁️ Ver</a>
+          {% if request.user == post.autor %}
+          <a href="/foro/post/{{ post.pk }}/editar/" class="post-action" style="color:var(--yellow);border-color:rgba(251,191,36,0.2);">✏️</a>
+          <a href="/foro/post/{{ post.pk }}/eliminar/" class="post-action" style="color:#f87171;border-color:rgba(239,68,68,0.2);">🗑️</a>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="empty-feed">
+        <span class="empty-feed-icon">🌱</span>
+        <div class="empty-feed-title">El jardín está vacío</div>
+        <p class="empty-feed-desc">¡Sé el primero en publicar algo!</p>
+        {% if request.user.is_authenticated %}
+        <a href="/foro/crear/" class="btn-crear">✏️ Crear primer post</a>
+        {% else %}
+        <a href="/usuarios/register/" class="btn-crear">🌱 Únete ahora</a>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      {% if posts.has_other_pages %}
+      <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:1.5rem;flex-wrap:wrap;">
+        {% if posts.has_previous %}
+        <a href="?page={{ posts.previous_page_number }}{% if categoria %}&categoria={{ categoria }}{% endif %}{% if faccion %}&faccion={{ faccion }}{% endif %}"
+          style="font-family:'Fredoka One',cursive;font-size:0.85rem;padding:7px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);color:var(--muted);text-decoration:none;">← Anterior</a>
+        {% endif %}
+        {% for num in posts.paginator.page_range %}
+          {% if posts.number == num %}
+          <span style="font-family:'Fredoka One',cursive;font-size:0.85rem;padding:7px 14px;border-radius:10px;background:rgba(34,197,94,0.15);border:1px solid var(--green);color:var(--green);">{{ num }}</span>
+          {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
+          <a href="?page={{ num }}{% if categoria %}&categoria={{ categoria }}{% endif %}{% if faccion %}&faccion={{ faccion }}{% endif %}"
+            style="font-family:'Fredoka One',cursive;font-size:0.85rem;padding:7px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);color:var(--muted);text-decoration:none;">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}{% if categoria %}&categoria={{ categoria }}{% endif %}{% if faccion %}&faccion={{ faccion }}{% endif %}"
+          style="font-family:'Fredoka One',cursive;font-size:0.85rem;padding:7px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);color:var(--muted);text-decoration:none;">Siguiente →</a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="sidebar-right">
+      <div class="sidebar-card">
+        <div class="sidebar-title">Rangos</div>
+        <div class="rank-item"><span class="rank-name">👑 Leyenda</span><span class="rank-req" style="color:#ef4444;">Admin</span></div>
+        <div class="rank-item"><span class="rank-name">🎖️ Comandante</span><span class="rank-req" style="color:#ef4444;">Admin</span></div>
+        <div class="rank-item"><span class="rank-name">⚔️ Guerrero</span><span class="rank-req">50p+100l</span></div>
+        <div class="rank-item"><span class="rank-name">🌻 Girasol</span><span class="rank-req">15p+30l</span></div>
+        <div class="rank-item"><span class="rank-name">🌱 Semilla</span><span class="rank-req">Nuevo</span></div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-title">Facciones</div>
+        <a href="?faccion=planta" class="faction-card plant"><div class="faction-name">🌱 Plantas</div></a>
+        <a href="?faccion=zombie" class="faction-card zombie"><div class="faction-name">🧟 Zombies</div></a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function likePost(pk, btn) {
+  fetch(`/foro/post/${pk}/like/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById(`likes-${pk}`).textContent = data.total;
+    btn.classList.toggle('liked', data.liked);
+  });
+}
+</script>
+{% endblock %}

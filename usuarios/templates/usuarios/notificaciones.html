@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Notificaciones - Garden Warfare{% endblock %}
+
+{% block extra_styles %}
+.notif-wrap {
+  max-width: 700px; margin: 2rem auto; padding: 0 1rem;
+}
+
+.notif-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.notif-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.8rem;
+  color: #e5e7eb; letter-spacing: 1px;
+}
+.notif-title span { color: var(--green); }
+.notif-sub { font-size: 0.82rem; color: var(--muted); font-weight: 700; margin-top: 2px; }
+
+.notif-list { display: flex; flex-direction: column; gap: 8px; }
+
+.notif-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem 1.2rem;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.2s; text-decoration: none;
+}
+.notif-card:hover { background: #111911; border-color: rgba(34,197,94,0.2); }
+.notif-card.nueva {
+  background: rgba(34,197,94,0.06);
+  border-color: rgba(34,197,94,0.2);
+}
+
+.notif-icon {
+  width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+}
+.notif-icon.like { background: rgba(239,68,68,0.15); border: 1.5px solid rgba(239,68,68,0.3); }
+.notif-icon.comentario { background: rgba(34,197,94,0.15); border: 1.5px solid rgba(34,197,94,0.3); }
+.notif-icon.mencion { background: rgba(251,191,36,0.15); border: 1.5px solid rgba(251,191,36,0.3); }
+
+.notif-info { flex: 1; min-width: 0; }
+.notif-texto {
+  font-size: 0.88rem; color: #e5e7eb; font-weight: 700; line-height: 1.4;
+}
+.notif-texto span { color: var(--green); }
+.notif-post {
+  font-size: 0.75rem; color: var(--muted); margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.notif-fecha { font-size: 0.7rem; color: var(--muted); font-weight: 800; flex-shrink: 0; }
+
+.notif-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+  box-shadow: 0 0 6px var(--green-glow);
+}
+
+.empty-notif {
+  text-align: center; padding: 4rem 2rem;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.empty-notif-icon { font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5; }
+.empty-notif-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+  color: #e5e7eb; margin-bottom: 0.5rem;
+}
+.empty-notif-desc { font-size: 0.85rem; color: var(--muted); }
+{% endblock %}
+
+{% block content %}
+<div class="notif-wrap">
+  <div class="notif-header">
+    <div>
+      <div class="notif-title">🔔 Notifi<span>caciones</span></div>
+      <div class="notif-sub">{{ notificaciones.count }} notificaciones en total</div>
+    </div>
+    <a href="/foro/" style="font-family:'Fredoka One',cursive;font-size:0.85rem;color:var(--muted);text-decoration:none;padding:7px 14px;border:1px solid var(--border);border-radius:10px;transition:all 0.15s;">← Volver</a>
+  </div>
+
+  {% if notificaciones %}
+  <div class="notif-list">
+    {% for notif in notificaciones %}
+    <a href="{% if notif.post %}/foro/post/{{ notif.post.pk }}/{% else %}#{% endif %}" class="notif-card {% if not notif.leida %}nueva{% endif %}">
+      <div class="notif-icon {{ notif.tipo }}">
+        {% if notif.tipo == 'like' %}❤️
+        {% elif notif.tipo == 'comentario' %}💬
+        {% else %}📢{% endif %}
+      </div>
+      <div class="notif-info">
+        <div class="notif-texto">
+          <span>{{ notif.remitente.username }}</span>
+          {% if notif.tipo == 'like' %}le dio like a tu post
+          {% elif notif.tipo == 'comentario' %}comentó en tu post
+          {% else %}te mencionó{% endif %}
+        </div>
+        {% if notif.post %}
+        <div class="notif-post">📝 {{ notif.post.titulo }}</div>
+        {% endif %}
+      </div>
+      <div class="notif-fecha">{{ notif.fecha|timesince }} ago</div>
+      {% if not notif.leida %}
+      <div class="notif-dot"></div>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-notif">
+    <span class="empty-notif-icon">🔔</span>
+    <div class="empty-notif-title">Sin notificaciones</div>
+    <p class="empty-notif-desc">Cuando alguien interactúe con tus posts aparecerá aquí.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

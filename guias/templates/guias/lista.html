@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block title %}Guías - Garden Warfare{% endblock %}
+{% block nav_guias %}active{% endblock %}
+
+{% block extra_styles %}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.guias-hero {
+  padding: 4rem 2rem 2rem; text-align: center; position: relative; overflow: hidden;
+}
+.guias-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(251,191,36,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.guias-hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 20px; padding: 4px 14px;
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--yellow); margin-bottom: 1rem;
+}
+.guias-hero h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: #fff; letter-spacing: 2px; line-height: 1; margin-bottom: 0.5rem;
+}
+.guias-hero h1 span { color: var(--yellow); }
+.guias-hero p { font-size: 0.88rem; color: var(--muted); font-weight: 700; letter-spacing: 1px; margin-bottom: 1.5rem; }
+
+.guias-actions {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 0.5rem; position: relative; z-index: 1;
+}
+.btn-crear {
+  font-family: 'Fredoka One', cursive; font-size: 0.92rem; letter-spacing: 0.5px;
+  padding: 9px 20px; border-radius: 10px; text-decoration: none;
+  background: var(--green); color: #fff;
+  box-shadow: 0 4px 15px var(--green-glow); transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-crear:hover { background: var(--green-dark); transform: translateY(-2px); }
+.btn-pendientes {
+  font-family: 'Fredoka One', cursive; font-size: 0.92rem; letter-spacing: 0.5px;
+  padding: 9px 20px; border-radius: 10px; text-decoration: none;
+  background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2);
+  color: var(--yellow); transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-pendientes:hover { background: rgba(251,191,36,0.2); transform: translateY(-2px); }
+
+/* FILTERS */
+.filters {
+  display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;
+  padding: 1.5rem 2rem;
+  max-width: 600px; margin: 0 auto;
+}
+.filter-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.85rem; letter-spacing: 0.5px;
+  padding: 7px 18px; border-radius: 20px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg2);
+  color: var(--muted); transition: all 0.15s;
+}
+.filter-btn:hover { border-color: rgba(251,191,36,0.3); color: #e5e7eb; }
+.filter-btn.active { background: rgba(251,191,36,0.15); border-color: var(--yellow); color: var(--yellow); }
+
+/* GRID */
+.guias-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem; padding: 0 2rem 3rem; max-width: 1200px; margin: 0 auto;
+}
+
+/* CARD */
+.guia-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.5rem;
+  text-decoration: none; color: inherit; display: block;
+  transition: all 0.2s; position: relative; overflow: hidden;
+}
+.guia-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--yellow); opacity: 0; transition: opacity 0.2s;
+}
+.guia-card:hover { transform: translateY(-4px); background: #111911; border-color: rgba(251,191,36,0.3); }
+.guia-card:hover::before { opacity: 1; }
+
+.card-tags { display: flex; gap: 6px; margin-bottom: 0.8rem; flex-wrap: wrap; }
+.tag {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+}
+.tag-principiante { background: rgba(34,197,94,0.15); color: #86efac; }
+.tag-intermedio { background: rgba(251,191,36,0.15); color: #fde68a; }
+.tag-avanzado { background: rgba(239,68,68,0.15); color: #fca5a5; }
+.tag-estrategia { background: rgba(56,189,248,0.15); color: #bae6fd; }
+.tag-personaje { background: rgba(34,197,94,0.15); color: #86efac; }
+.tag-modo { background: rgba(168,85,247,0.15); color: #c4b5fd; }
+.tag-secretos { background: rgba(251,191,36,0.15); color: #fde68a; }
+
+.card-titulo {
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+  color: #e5e7eb; margin-bottom: 0.5rem; letter-spacing: 0.5px; line-height: 1.3;
+}
+.card-desc { font-size: 0.85rem; color: #6b7280; line-height: 1.6; margin-bottom: 1rem; }
+
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 0.8rem; border-top: 1px solid var(--border);
+}
+.card-autor { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--muted); font-weight: 700; }
+.card-autor-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.2);
+  display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+  overflow: hidden;
+}
+.card-autor-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.card-fecha { font-size: 0.68rem; color: #374151; font-weight: 700; }
+.card-ver {
+  font-family: 'Fredoka One', cursive; font-size: 0.72rem;
+  color: var(--yellow); letter-spacing: 0.5px;
+}
+
+.empty {
+  text-align: center; padding: 4rem 2rem;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; grid-column: 1/-1;
+}
+.empty-icon { font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.5; }
+.empty-title { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: #e5e7eb; margin-bottom: 0.5rem; }
+.empty-sub { font-size: 0.85rem; color: var(--muted); }
+
+/* PENDIENTE BADGE */
+.pendiente-badge {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 6px;
+  background: rgba(251,191,36,0.15); color: var(--yellow);
+}
+{% endblock %}
+
+{% block content %}
+
+<div class="guias-hero">
+  <div class="guias-hero-tag">📖 Comunidad GW</div>
+  <h1>GUÍAS & <span>CONSEJOS</span></h1>
+  <p>Aprende de los mejores guerreros del jardín</p>
+
+  {% if request.user.is_authenticated %}
+  <div class="guias-actions">
+    <a href="/guias/crear/" class="btn-crear">✏️ Crear guía</a>
+    {% if request.user.is_staff %}
+    <a href="/guias/pendientes/" class="btn-pendientes">⏳ Pendientes</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filtrar('todos', this)">Todos</button>
+  <button class="filter-btn" onclick="filtrar('principiante', this)">🟢 Principiante</button>
+  <button class="filter-btn" onclick="filtrar('intermedio', this)">🟡 Intermedio</button>
+  <button class="filter-btn" onclick="filtrar('avanzado', this)">🔴 Avanzado</button>
+</div>
+
+<div class="guias-grid" id="grid">
+  {% for g in guias %}
+  <a href="/guias/{{ g.pk }}/" class="guia-card" data-nivel="{{ g.nivel }}">
+    <div class="card-tags">
+      <span class="tag tag-{{ g.nivel }}">{{ g.get_nivel_display }}</span>
+      <span class="tag tag-{{ g.categoria }}">{{ g.get_categoria_display }}</span>
+    </div>
+    <div class="card-titulo">{{ g.titulo }}</div>
+    <div class="card-desc">{{ g.descripcion }}</div>
+    <div class="card-footer">
+      <div class="card-autor">
+        <div class="card-autor-avatar">
+          {% if g.autor and g.autor.perfil.avatar %}
+          <img src="{{ g.autor.perfil.avatar.url }}" alt="{{ g.autor.username }}">
+          {% elif g.autor and g.autor.perfil.faccion == 'planta' %}🌱
+          {% elif g.autor and g.autor.perfil.faccion == 'zombie' %}🧟
+          {% else %}⚔️{% endif %}
+        </div>
+        {% if g.autor %}{{ g.autor.username }}{% else %}Anónimo{% endif %}
+        • {{ g.fecha|date:"d/m/Y" }}
+      </div>
+      <span class="card-ver">Ver →</span>
+    </div>
+  </a>
+  {% empty %}
+  <div class="empty">
+    <span class="empty-icon">📖</span>
+    <div class="empty-title">No hay guías aún</div>
+    <div class="empty-sub">
+      {% if request.user.is_authenticated %}
+      <a href="/guias/crear/" style="color:var(--green);text-decoration:none;font-weight:800;">¡Sé el primero en crear una!</a>
+      {% else %}
+      <a href="/usuarios/register/" style="color:var(--green);text-decoration:none;font-weight:800;">Regístrate para crear guías</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function filtrar(nivel, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.guia-card').forEach(c => {
+      if (nivel === 'todos' || c.dataset.nivel === nivel) {
+        c.style.display = '';
+      } else {
+        c.style.display = 'none';
+      }
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Contenido - Panel Admin{% endblock %}
+
+{% block extra_styles %}
+.panel-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+}
+.panel-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #e5e7eb; letter-spacing: 1px; }
+.panel-title span { color: var(--green); }
+
+.panel-nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.panel-nav-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem;
+  padding: 7px 14px; border-radius: 10px; text-decoration: none;
+  border: 1px solid var(--border); color: var(--muted); background: transparent; transition: all 0.15s;
+}
+.panel-nav-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.15); }
+.panel-nav-btn.active { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green); }
+
+.contenido-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+@media (max-width: 700px) { .contenido-grid { grid-template-columns: 1fr; } }
+
+.tabla-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+.tabla-header {
+  padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tabla-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #e5e7eb; }
+.tabla-count { font-size: 0.72rem; color: var(--muted); font-weight: 800; }
+
+.item-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.item-row:last-child { border-bottom: none; }
+.item-row:hover { background: rgba(255,255,255,0.02); }
+
+.item-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+}
+.item-icon.planta { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); }
+.item-icon.zombie { background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.2); }
+.item-icon.neutral { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.2); }
+.item-icon.guia { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.2); }
+
+.item-info { flex: 1; min-width: 0; }
+.item-name {
+  font-family: 'Fredoka One', cursive; font-size: 0.88rem;
+  color: #e5e7eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.item-meta { font-size: 0.68rem; color: var(--muted); font-weight: 700; margin-top: 1px; }
+
+.badge {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 6px;
+}
+.badge-planta { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-zombie { background: rgba(168,85,247,0.12); color: #c4b5fd; }
+.badge-neutral { background: rgba(251,191,36,0.12); color: #fde68a; }
+.badge-principiante { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-intermedio { background: rgba(251,191,36,0.12); color: #fde68a; }
+.badge-avanzado { background: rgba(239,68,68,0.12); color: #fca5a5; }
+
+.action-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.7rem;
+  padding: 4px 10px; border-radius: 8px; text-decoration: none;
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  transition: all 0.15s; display: inline-block;
+}
+.action-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.2); }
+
+.add-btn {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem;
+  padding: 8px 14px; border-radius: 10px; text-decoration: none;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  color: var(--green); transition: all 0.15s;
+}
+.add-btn:hover { background: rgba(34,197,94,0.2); }
+
+.empty-state {
+  text-align: center; padding: 2rem; color: var(--muted);
+  font-size: 0.85rem; font-weight: 700;
+}
+{% endblock %}
+
+{% block content %}
+<div class="panel-wrap">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title">🌱 Gestionar <span>Contenido</span></div>
+    </div>
+    <div class="panel-nav">
+      <a href="/panel/" class="panel-nav-btn">📊 Dashboard</a>
+      <a href="/panel/usuarios/" class="panel-nav-btn">👥 Usuarios</a>
+      <a href="/panel/posts/" class="panel-nav-btn">📝 Posts</a>
+      <a href="/panel/contenido/" class="panel-nav-btn active">🌱 Contenido</a>
+    </div>
+  </div>
+
+  <div class="contenido-grid">
+
+    <!-- PERSONAJES -->
+    <div class="tabla-card">
+      <div class="tabla-header">
+        <div class="tabla-title">🌱 Personajes</div>
+        <a href="/admin/personajes/personaje/add/" class="add-btn">+ Agregar</a>
+      </div>
+      {% for p in personajes %}
+      <div class="item-row">
+        <div class="item-icon {{ p.faccion }}">
+          {% if p.faccion == 'planta' %}🌱{% else %}🧟{% endif %}
+        </div>
+        <div class="item-info">
+          <div class="item-name">{{ p.nombre }}</div>
+          <div class="item-meta">{{ p.get_juego_display }}</div>
+        </div>
+        <span class="badge badge-{{ p.faccion }}">{{ p.get_faccion_display }}</span>
+        <a href="/personajes/{{ p.pk }}/" class="action-btn">👁️</a>
+      </div>
+      {% empty %}
+      <div class="empty-state">No hay personajes aún</div>
+      {% endfor %}
+    </div>
+
+    <!-- GUÍAS -->
+    <div class="tabla-card">
+      <div class="tabla-header">
+        <div class="tabla-title">📖 Guías</div>
+        <a href="/admin/guias/guia/add/" class="add-btn">+ Agregar</a>
+      </div>
+      {% for g in guias %}
+      <div class="item-row">
+        <div class="item-icon guia">📖</div>
+        <div class="item-info">
+          <div class="item-name">{{ g.titulo }}</div>
+          <div class="item-meta">{{ g.fecha|date:"d/m/Y" }}</div>
+        </div>
+        <span class="badge badge-{{ g.nivel }}">{{ g.get_nivel_display }}</span>
+        <a href="/guias/{{ g.pk }}/" class="action-btn">👁️</a>
+      </div>
+      {% empty %}
+      <div class="empty-state">No hay guías aún</div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

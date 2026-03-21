@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+
+{% block title %}Personajes - Garden Warfare{% endblock %}
+{% block nav_personajes %}active{% endblock %}
+
+{% block extra_styles %}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* HERO */
+.chars-hero {
+  padding: 4rem 2rem 3rem; text-align: center; position: relative; overflow: hidden;
+}
+.chars-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(34,197,94,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.chars-hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 20px; padding: 4px 14px;
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--green); margin-bottom: 1rem;
+}
+.chars-hero h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: #fff; letter-spacing: 2px; line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.chars-hero h1 span { color: var(--green); }
+.chars-hero p { font-size: 0.88rem; color: var(--muted); font-weight: 700; letter-spacing: 1px; }
+
+/* FACTION TABS */
+.faction-tabs {
+  display: flex; gap: 0; justify-content: center;
+  padding: 0 2rem 1.5rem; max-width: 500px; margin: 0 auto;
+}
+.faction-tab {
+  flex: 1; padding: 10px 20px; cursor: pointer;
+  font-family: 'Fredoka One', cursive; font-size: 0.95rem; letter-spacing: 1px;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--muted); transition: all 0.2s; text-align: center;
+}
+.faction-tab:first-child { border-radius: 12px 0 0 12px; }
+.faction-tab:last-child { border-radius: 0 12px 12px 0; }
+.faction-tab:not(:first-child) { border-left: none; }
+.faction-tab:hover { color: #e5e7eb; background: rgba(255,255,255,0.06); }
+.faction-tab.active-all { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #fff; }
+.faction-tab.active-plant { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green); }
+.faction-tab.active-zombie { background: rgba(168,85,247,0.15); border-color: #a855f7; color: #a855f7; }
+
+/* STATS BAR */
+.chars-stats {
+  display: flex; justify-content: center; gap: 2rem;
+  padding: 1rem 2rem 2rem; flex-wrap: wrap;
+}
+.chars-stat { text-align: center; }
+.chars-stat-num {
+  font-family: 'Fredoka One', cursive; font-size: 1.5rem;
+  color: #e5e7eb; display: block;
+}
+.chars-stat-label { font-size: 0.68rem; color: var(--muted); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+/* GRID */
+.chars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem; padding: 0 2rem 3rem;
+  max-width: 1200px; margin: 0 auto;
+}
+
+/* CARD */
+.char-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  text-decoration: none; color: inherit; display: block;
+  transition: all 0.2s; position: relative;
+}
+.char-card:hover { transform: translateY(-6px); }
+.char-card.planta:hover { border-color: var(--green); box-shadow: 0 8px 30px rgba(34,197,94,0.15); }
+.char-card.zombie:hover { border-color: #a855f7; box-shadow: 0 8px 30px rgba(168,85,247,0.15); }
+
+.char-img-wrap {
+  position: relative; height: 160px; overflow: hidden;
+  background: rgba(255,255,255,0.03);
+}
+.char-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.3s;
+}
+.char-card:hover .char-img-wrap img { transform: scale(1.08); }
+
+.char-img-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 4rem; opacity: 0.4;
+}
+
+.char-faction-strip {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.char-faction-strip.planta { background: var(--green); }
+.char-faction-strip.zombie { background: #a855f7; }
+
+.char-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 0.5rem 0.8rem;
+  background: linear-gradient(to top, rgba(8,12,8,0.9), transparent);
+  display: flex; gap: 4px;
+}
+
+.char-body { padding: 1rem; }
+
+.char-nombre {
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+  color: #e5e7eb; letter-spacing: 0.5px; margin-bottom: 0.5rem;
+}
+
+.char-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 0.7rem; }
+.char-badge {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 6px;
+}
+.rol-ataque { background: rgba(239,68,68,0.15); color: #fca5a5; }
+.rol-soporte { background: rgba(34,197,94,0.15); color: #86efac; }
+.rol-defensa { background: rgba(59,130,246,0.15); color: #93c5fd; }
+.rol-control { background: rgba(251,191,36,0.15); color: #fde68a; }
+.badge-planta { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-zombie { background: rgba(168,85,247,0.12); color: #c4b5fd; }
+
+.char-info { display: flex; justify-content: space-between; margin-bottom: 0.7rem; }
+.char-info-item { display: flex; flex-direction: column; gap: 1px; }
+.char-info-label { font-size: 0.62rem; color: var(--muted); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.char-info-val { font-size: 0.8rem; color: #9ca3af; font-weight: 700; }
+
+.char-desc {
+  font-size: 0.78rem; color: #4b5563; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+  margin-bottom: 0.8rem;
+}
+
+.char-dificultad { display: flex; gap: 4px; align-items: center; }
+.dif-label { font-size: 0.62rem; color: var(--muted); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; }
+.dif-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+.dif-dot.activo { background: var(--yellow); box-shadow: 0 0 4px rgba(251,191,36,0.5); }
+
+.char-footer {
+  padding: 0.7rem 1rem; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.char-ver {
+  font-family: 'Fredoka One', cursive; font-size: 0.75rem;
+  color: var(--green); letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 4px;
+}
+.char-card.planta .char-ver { color: var(--green); }
+.char-card.zombie .char-ver { color: #a855f7; }
+
+.empty {
+  text-align: center; padding: 4rem; color: var(--muted);
+  grid-column: 1/-1; font-size: 0.9rem; font-weight: 700;
+}
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="chars-hero">
+  <div class="chars-hero-tag">⚔️ Garden Warfare 1 & 2</div>
+  <h1>TODAS LAS <span>CLASES</span></h1>
+  <p>Elige tu guerrero y domina el campo de batalla</p>
+</div>
+
+<!-- STATS -->
+<div class="chars-stats">
+  <div class="chars-stat">
+    <span class="chars-stat-num">{{ personajes|length }}</span>
+    <span class="chars-stat-label">Clases</span>
+  </div>
+  <div class="chars-stat">
+    <span class="chars-stat-num">2</span>
+    <span class="chars-stat-label">Facciones</span>
+  </div>
+  <div class="chars-stat">
+    <span class="chars-stat-num">2</span>
+    <span class="chars-stat-label">Juegos</span>
+  </div>
+</div>
+
+<!-- FACTION TABS -->
+<div class="faction-tabs">
+  <button class="faction-tab active-all" onclick="filtrar('todos', this, 'active-all')">⚔️ Todos</button>
+  <button class="faction-tab" onclick="filtrar('planta', this, 'active-plant')">🌱 Plantas</button>
+  <button class="faction-tab" onclick="filtrar('zombie', this, 'active-zombie')">🧟 Zombies</button>
+</div>
+
+<!-- GRID -->
+<div class="chars-grid" id="grid">
+  {% for p in personajes %}
+  <a href="/personajes/{{ p.pk }}/" class="char-card {{ p.faccion }}" data-faccion="{{ p.faccion }}">
+
+    <div class="char-img-wrap">
+      <div class="char-faction-strip {{ p.faccion }}"></div>
+      {% if p.imagen %}
+      <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
+      {% else %}
+      <div class="char-img-placeholder">
+        {% if p.faccion == 'planta' %}🌱{% else %}🧟{% endif %}
+      </div>
+      {% endif %}
+      <div class="char-overlay">
+        <span class="char-badge rol-{{ p.rol }}">{{ p.get_rol_display }}</span>
+        <span class="char-badge badge-{{ p.faccion }}">{{ p.get_faccion_display }}</span>
+      </div>
+    </div>
+
+    <div class="char-body">
+      <div class="char-nombre">{{ p.nombre }}</div>
+      <div class="char-info">
+        <div class="char-info-item">
+          <span class="char-info-label">Juego</span>
+          <span class="char-info-val">{{ p.get_juego_display }}</span>
+        </div>
+        <div class="char-info-item" style="text-align:right;">
+          <span class="char-info-label">Dificultad</span>
+          <div class="char-dificultad" style="justify-content:flex-end;">
+            {% for i in "12345" %}
+            <div class="dif-dot {% if forloop.counter <= p.dificultad %}activo{% endif %}"></div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% if p.descripcion %}
+      <div class="char-desc">{{ p.descripcion }}</div>
+      {% endif %}
+    </div>
+
+    <div class="char-footer">
+      <span class="char-ver">Ver detalles →</span>
+    </div>
+
+  </a>
+  {% empty %}
+  <div class="empty">🌱 No hay personajes aún. ¡Agrégalos desde el panel admin!</div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function filtrar(faccion, btn, activeClass) {
+    document.querySelectorAll('.faction-tab').forEach(b => {
+      b.classList.remove('active-all', 'active-plant', 'active-zombie');
+    });
+    btn.classList.add(activeClass);
+    document.querySelectorAll('.char-card').forEach(c => {
+      if (faccion === 'todos' || c.dataset.faccion === faccion) {
+        c.style.display = '';
+      } else {
+        c.style.display = 'none';
+      }
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Post - Garden Warfare{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_styles %}
+.crear-wrap {
+  max-width: 700px; margin: 2rem auto; padding: 0 1rem;
+}
+
+.crear-header {
+  margin-bottom: 1.5rem;
+}
+.crear-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.8rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 0.3rem;
+}
+.crear-sub { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
+
+.crear-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 2rem;
+}
+
+.form-group { margin-bottom: 1.2rem; }
+.form-label {
+  font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+  color: var(--green); letter-spacing: 1px; display: block; margin-bottom: 6px;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%; padding: 10px 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border); border-radius: 10px;
+  color: #e5e7eb; font-family: 'Nunito', sans-serif; font-size: 0.92rem;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: rgba(34,197,94,0.4);
+  background: rgba(255,255,255,0.07);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
+.form-textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+.form-select { appearance: none; }
+.form-select option { background: #0d140d; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
+
+.char-count { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-align: right; margin-top: 4px; }
+
+/* FACTION SELECTOR */
+.faction-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.faction-opt {
+  padding: 10px 8px; border-radius: 10px; cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  text-align: center; transition: all 0.15s;
+  position: relative;
+}
+.faction-opt input { display: none; }
+.faction-opt:has(input:checked).plant { border-color: var(--green); background: rgba(34,197,94,0.12); }
+.faction-opt:has(input:checked).zombie { border-color: #a855f7; background: rgba(168,85,247,0.12); }
+.faction-opt:has(input:checked).neutral { border-color: var(--yellow); background: rgba(251,191,36,0.12); }
+.faction-emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+.faction-label { font-family: 'Fredoka One', cursive; font-size: 0.78rem; color: #9ca3af; }
+.faction-opt:has(input:checked).plant .faction-label { color: var(--green); }
+.faction-opt:has(input:checked).zombie .faction-label { color: #a855f7; }
+.faction-opt:has(input:checked).neutral .faction-label { color: var(--yellow); }
+
+/* IMAGE UPLOAD */
+.img-upload {
+  border: 2px dashed var(--border); border-radius: 12px;
+  padding: 1.5rem; text-align: center; cursor: pointer;
+  transition: all 0.2s; position: relative;
+}
+.img-upload:hover { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.04); }
+.img-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.img-upload-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; opacity: 0.5; }
+.img-upload-text { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
+.img-upload-sub { font-size: 0.72rem; color: #374151; margin-top: 3px; }
+
+.img-preview { display: none; width: 100%; border-radius: 10px; margin-top: 0.8rem; max-height: 200px; object-fit: cover; }
+
+/* SUBMIT */
+.form-actions { display: flex; gap: 10px; margin-top: 1.5rem; }
+.btn-submit {
+  flex: 1; padding: 13px;
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem; letter-spacing: 1px;
+  background: var(--green); border: none; border-radius: 12px;
+  color: #fff; cursor: pointer;
+  box-shadow: 0 6px 20px var(--green-glow); transition: all 0.2s;
+}
+.btn-submit:hover { background: var(--green-dark); transform: translateY(-2px); }
+.btn-cancel {
+  padding: 13px 20px;
+  font-family: 'Fredoka One', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: transparent; border: 1px solid var(--border); border-radius: 12px;
+  color: var(--muted); text-decoration: none; text-align: center;
+  transition: all 0.15s;
+}
+.btn-cancel:hover { border-color: rgba(255,255,255,0.15); color: #e5e7eb; }
+{% endblock %}
+
+{% block content %}
+<div class="crear-wrap">
+  <div class="crear-header">
+    <div class="crear-title">✏️ Crear Post</div>
+    <div class="crear-sub">Comparte algo con la comunidad</div>
+  </div>
+
+  <div class="crear-card">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label">📝 Título</label>
+        <input type="text" name="titulo" class="form-input" placeholder="Dale un título a tu post..." required maxlength="200" id="titulo-input">
+        <div class="char-count"><span id="titulo-count">0</span>/200</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">💬 Contenido</label>
+        <textarea name="contenido" class="form-textarea" placeholder="¿Qué quieres compartir con la comunidad?" required id="contenido-input"></textarea>
+        <div class="char-count"><span id="contenido-count">0</span> caracteres</div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">🏷️ Categoría</label>
+          <select name="categoria" class="form-select">
+            <option value="general">💬 General</option>
+            <option value="estrategia">⚔️ Estrategia</option>
+            <option value="builds">🔧 Builds</option>
+            <option value="humor">😄 Humor</option>
+            <option value="noticias">📰 Noticias</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">⚔️ Facción</label>
+          <div class="faction-selector">
+            <label class="faction-opt plant">
+              <input type="radio" name="faccion" value="planta">
+              <span class="faction-emoji">🌱</span>
+              <span class="faction-label">Plantas</span>
+            </label>
+            <label class="faction-opt zombie">
+              <input type="radio" name="faccion" value="zombie">
+              <span class="faction-emoji">🧟</span>
+              <span class="faction-label">Zombies</span>
+            </label>
+            <label class="faction-opt neutral">
+              <input type="radio" name="faccion" value="ambos" checked>
+              <span class="faction-emoji">⚔️</span>
+              <span class="faction-label">Ambos</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">🖼️ Imagen (opcional)</label>
+        <div class="img-upload" id="img-upload">
+          <input type="file" name="imagen" accept="image/*" onchange="previewImg(this)">
+          <span class="img-upload-icon">📸</span>
+          <div class="img-upload-text">Haz clic para subir una imagen</div>
+          <div class="img-upload-sub">PNG, JPG, GIF • Max 5MB</div>
+        </div>
+        <img id="img-preview" class="img-preview" src="" alt="Preview">
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">🌱 Publicar Post</button>
+        <a href="/foro/" class="btn-cancel">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.getElementById('titulo-input').addEventListener('input', function() {
+    document.getElementById('titulo-count').textContent = this.value.length;
+  });
+  document.getElementById('contenido-input').addEventListener('input', function() {
+    document.getElementById('contenido-count').textContent = this.value.length;
+  });
+  function previewImg(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('img-preview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+{% endblock %}

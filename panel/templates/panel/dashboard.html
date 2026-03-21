@@ -1,0 +1,411 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Admin - Garden Warfare{% endblock %}
+
+{% block extra_styles %}
+.panel-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+}
+.panel-title {
+  font-family: 'Fredoka One', cursive; font-size: 2rem;
+  color: #e5e7eb; letter-spacing: 1px;
+}
+.panel-title span { color: var(--yellow); }
+.panel-sub { font-size: 0.82rem; color: var(--muted); font-weight: 700; margin-top: 2px; }
+
+.panel-nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.panel-nav-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem; letter-spacing: 0.5px;
+  padding: 7px 14px; border-radius: 10px; text-decoration: none;
+  border: 1px solid var(--border); color: var(--muted);
+  background: transparent; transition: all 0.15s;
+}
+.panel-nav-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.15); }
+.panel-nav-btn.active { background: rgba(251,191,36,0.15); border-color: var(--yellow); color: var(--yellow); }
+
+/* STATS GRID */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem; margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.2rem; text-align: center;
+  transition: all 0.2s; position: relative; overflow: hidden;
+}
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--green); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s;
+}
+.stat-card:hover { border-color: rgba(34,197,94,0.2); transform: translateY(-2px); }
+.stat-card:hover::before { transform: scaleX(1); }
+.stat-card.purple::before { background: #a855f7; }
+.stat-card.yellow::before { background: var(--yellow); }
+.stat-card.blue::before { background: #60a5fa; }
+.stat-card.red::before { background: #f87171; }
+.stat-card.teal::before { background: #2dd4bf; }
+.stat-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+.stat-num {
+  font-family: 'Fredoka One', cursive; font-size: 2.2rem;
+  color: var(--green); display: block; letter-spacing: 1px;
+}
+.stat-label { font-size: 0.72rem; color: var(--muted); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.stat-card.purple .stat-num { color: #a855f7; }
+.stat-card.yellow .stat-num { color: var(--yellow); }
+.stat-card.blue .stat-num { color: #60a5fa; }
+.stat-card.red .stat-num { color: #f87171; }
+.stat-card.teal .stat-num { color: #2dd4bf; }
+.stat-trend {
+  font-size: 0.68rem; font-weight: 800; margin-top: 4px;
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.trend-up { color: var(--green); }
+.trend-new { color: var(--yellow); }
+
+/* WEEK STATS */
+.week-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1rem; margin-bottom: 1.5rem;
+}
+@media (max-width: 700px) { .week-stats { grid-template-columns: repeat(2, 1fr); } }
+.week-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.week-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+}
+.week-icon.green { background: rgba(34,197,94,0.12); }
+.week-icon.purple { background: rgba(168,85,247,0.12); }
+.week-icon.yellow { background: rgba(251,191,36,0.12); }
+.week-icon.blue { background: rgba(96,165,250,0.12); }
+.week-num {
+  font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: #e5e7eb; display: block;
+}
+.week-label { font-size: 0.68rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+
+/* PANEL GRID */
+.panel-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.2rem; margin-bottom: 1.5rem;
+}
+@media (max-width: 800px) { .panel-grid { grid-template-columns: 1fr; } }
+.panel-grid-3 {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.2rem; margin-bottom: 1.5rem;
+}
+@media (max-width: 900px) { .panel-grid-3 { grid-template-columns: 1fr; } }
+
+.panel-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.4rem;
+}
+.panel-card-title {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: #e5e7eb; margin-bottom: 1rem; letter-spacing: 1px;
+  display: flex; align-items: center; gap: 8px;
+}
+.panel-card-title a {
+  font-size: 0.72rem; color: var(--green); text-decoration: none;
+  margin-left: auto; font-family: 'Nunito', sans-serif; font-weight: 800;
+}
+
+/* FACTION CHART */
+.faction-chart { display: flex; flex-direction: column; gap: 12px; }
+.faction-bar-row { display: flex; align-items: center; gap: 10px; }
+.faction-bar-label { font-size: 0.82rem; font-weight: 800; color: #9ca3af; width: 80px; flex-shrink: 0; }
+.faction-bar-wrap { flex: 1; background: rgba(255,255,255,0.05); border-radius: 20px; height: 10px; overflow: hidden; }
+.faction-bar { height: 100%; border-radius: 20px; transition: width 1.2s ease; }
+.faction-bar.plant { background: var(--green); box-shadow: 0 0 8px var(--green-glow); }
+.faction-bar.zombie { background: #a855f7; box-shadow: 0 0 8px rgba(168,85,247,0.3); }
+.faction-bar.neutral { background: var(--yellow); box-shadow: 0 0 8px rgba(251,191,36,0.3); }
+.faction-bar-pct { font-size: 0.72rem; font-weight: 800; color: var(--muted); width: 35px; text-align: right; }
+
+/* RECENT ITEMS */
+.recent-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.recent-item:last-child { border-bottom: none; }
+.recent-avatar {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; overflow: hidden; padding: 0;
+}
+.recent-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.recent-info { flex: 1; min-width: 0; }
+.recent-name {
+  font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+  color: #e5e7eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.recent-meta { font-size: 0.68rem; color: var(--muted); font-weight: 700; margin-top: 1px; }
+.recent-badge {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  padding: 2px 8px; border-radius: 6px; flex-shrink: 0; text-transform: uppercase;
+}
+.badge-active { background: rgba(34,197,94,0.15); color: #86efac; }
+.badge-inactive { background: rgba(239,68,68,0.15); color: #fca5a5; }
+.badge-pendiente { background: rgba(251,191,36,0.15); color: #fde68a; }
+.badge-staff { background: rgba(251,191,36,0.15); color: var(--yellow); }
+
+/* ACCIONES RAPIDAS */
+.accion-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 12px;
+  text-decoration: none; font-weight: 800; font-size: 0.85rem;
+  transition: all 0.15s; margin-bottom: 6px;
+}
+.accion-btn:last-child { margin-bottom: 0; }
+.accion-btn.green { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); color: #86efac; }
+.accion-btn.green:hover { background: rgba(34,197,94,0.15); }
+.accion-btn.purple { background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); color: #c4b5fd; }
+.accion-btn.purple:hover { background: rgba(168,85,247,0.15); }
+.accion-btn.yellow { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); color: #fde68a; }
+.accion-btn.yellow:hover { background: rgba(251,191,36,0.15); }
+.accion-btn.blue { background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2); color: #93c5fd; }
+.accion-btn.blue:hover { background: rgba(96,165,250,0.15); }
+.accion-btn.red { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
+.accion-btn.red:hover { background: rgba(239,68,68,0.15); }
+
+/* PENDIENTES ALERT */
+.pendientes-alert {
+  background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25);
+  border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.pendientes-alert-icon { font-size: 1.3rem; }
+.pendientes-alert-text { flex: 1; font-size: 0.85rem; color: #fde68a; font-weight: 700; }
+.pendientes-alert-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.78rem;
+  padding: 5px 12px; border-radius: 8px;
+  background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.3);
+  color: var(--yellow); text-decoration: none; transition: all 0.15s;
+}
+.pendientes-alert-btn:hover { background: rgba(251,191,36,0.25); }
+{% endblock %}
+
+{% block content %}
+<div class="panel-wrap">
+
+  <div class="panel-header">
+    <div>
+      <div class="panel-title">🛡️ Panel <span>Admin</span></div>
+      <div class="panel-sub">Bienvenido, {{ request.user.username }} — Control total del jardín</div>
+    </div>
+    <div class="panel-nav">
+      <a href="/panel/" class="panel-nav-btn active">📊 Dashboard</a>
+      <a href="/panel/usuarios/" class="panel-nav-btn">👥 Usuarios</a>
+      <a href="/panel/posts/" class="panel-nav-btn">📝 Posts</a>
+      <a href="/panel/contenido/" class="panel-nav-btn">🌱 Contenido</a>
+      <a href="/admin/" class="panel-nav-btn" style="color:#f87171;border-color:rgba(239,68,68,0.2);">⚙️ Django</a>
+    </div>
+  </div>
+
+  {% if guias_pendientes_count > 0 %}
+  <div class="pendientes-alert">
+    <span class="pendientes-alert-icon">⏳</span>
+    <div class="pendientes-alert-text">
+      Tienes <strong>{{ guias_pendientes_count }} guía{{ guias_pendientes_count|pluralize }}</strong> pendiente{{ guias_pendientes_count|pluralize }} de aprobación.
+    </div>
+    <a href="/guias/pendientes/" class="pendientes-alert-btn">Revisar →</a>
+  </div>
+  {% endif %}
+
+  <!-- STATS PRINCIPALES -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">👥</span>
+      <span class="stat-num">{{ total_usuarios }}</span>
+      <span class="stat-label">Usuarios</span>
+      <div class="stat-trend trend-up">+{{ usuarios_semana }} esta semana</div>
+    </div>
+    <div class="stat-card purple">
+      <span class="stat-icon">📝</span>
+      <span class="stat-num">{{ total_posts }}</span>
+      <span class="stat-label">Posts</span>
+      <div class="stat-trend trend-up">+{{ posts_semana }} esta semana</div>
+    </div>
+    <div class="stat-card yellow">
+      <span class="stat-icon">💬</span>
+      <span class="stat-num">{{ total_comentarios }}</span>
+      <span class="stat-label">Comentarios</span>
+    </div>
+    <div class="stat-card blue">
+      <span class="stat-icon">📖</span>
+      <span class="stat-num">{{ total_guias }}</span>
+      <span class="stat-label">Guías</span>
+    </div>
+    <div class="stat-card red">
+      <span class="stat-icon">🌱</span>
+      <span class="stat-num">{{ total_personajes }}</span>
+      <span class="stat-label">Personajes</span>
+    </div>
+    <div class="stat-card teal">
+      <span class="stat-icon">💌</span>
+      <span class="stat-num">{{ total_mensajes }}</span>
+      <span class="stat-label">Mensajes</span>
+    </div>
+  </div>
+
+  <!-- STATS SEMANA -->
+  <div class="week-stats">
+    <div class="week-card">
+      <div class="week-icon green">📝</div>
+      <div>
+        <span class="week-num">{{ posts_semana }}</span>
+        <span class="week-label">Posts esta semana</span>
+      </div>
+    </div>
+    <div class="week-card">
+      <div class="week-icon purple">👥</div>
+      <div>
+        <span class="week-num">{{ usuarios_semana }}</span>
+        <span class="week-label">Nuevos usuarios</span>
+      </div>
+    </div>
+    <div class="week-card">
+      <div class="week-icon yellow">⏳</div>
+      <div>
+        <span class="week-num">{{ guias_pendientes_count }}</span>
+        <span class="week-label">Guías pendientes</span>
+      </div>
+    </div>
+    <div class="week-card">
+      <div class="week-icon blue">✅</div>
+      <div>
+        <span class="week-num">{{ usuarios_verificados }}</span>
+        <span class="week-label">Verificados</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID PRINCIPAL -->
+  <div class="panel-grid">
+
+    <!-- FACCIONES -->
+    <div class="panel-card">
+      <div class="panel-card-title">⚔️ Distribución de Facciones</div>
+      <div class="faction-chart">
+        <div class="faction-bar-row">
+          <span class="faction-bar-label">🌱 Plantas</span>
+          <div class="faction-bar-wrap">
+            <div class="faction-bar plant" style="width:{% if total_usuarios %}{% widthratio plantas total_usuarios 100 %}%{% else %}0%{% endif %}"></div>
+          </div>
+          <span class="faction-bar-pct">{{ plantas }}</span>
+        </div>
+        <div class="faction-bar-row">
+          <span class="faction-bar-label">🧟 Zombies</span>
+          <div class="faction-bar-wrap">
+            <div class="faction-bar zombie" style="width:{% if total_usuarios %}{% widthratio zombies total_usuarios 100 %}%{% else %}0%{% endif %}"></div>
+          </div>
+          <span class="faction-bar-pct">{{ zombies }}</span>
+        </div>
+        <div class="faction-bar-row">
+          <span class="faction-bar-label">⚔️ Neutral</span>
+          <div class="faction-bar-wrap">
+            <div class="faction-bar neutral" style="width:{% if total_usuarios %}{% widthratio neutrales total_usuarios 100 %}%{% else %}0%{% endif %}"></div>
+          </div>
+          <span class="faction-bar-pct">{{ neutrales }}</span>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--border);">
+        <div class="panel-card-title" style="margin-bottom:0.8rem;">🏅 Distribución de Rangos</div>
+        {% for rango, count in rangos.items %}
+        <div class="faction-bar-row" style="margin-bottom:8px;">
+          <span class="faction-bar-label" style="font-size:0.75rem;">{{ rango }}</span>
+          <div class="faction-bar-wrap">
+            <div class="faction-bar plant" style="width:{% if total_usuarios %}{% widthratio count total_usuarios 100 %}%{% else %}0%{% endif %}"></div>
+          </div>
+          <span class="faction-bar-pct">{{ count }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- ACCIONES RAPIDAS -->
+    <div class="panel-card">
+      <div class="panel-card-title">⚡ Acciones Rápidas</div>
+      <a href="/panel/usuarios/" class="accion-btn green">👥 Gestionar usuarios</a>
+      <a href="/panel/posts/" class="accion-btn purple">📝 Gestionar posts</a>
+      <a href="/guias/pendientes/" class="accion-btn yellow">⏳ Aprobar guías {% if guias_pendientes_count > 0 %}<span style="background:rgba(251,191,36,0.3);padding:1px 8px;border-radius:10px;font-size:0.7rem;">{{ guias_pendientes_count }}</span>{% endif %}</a>
+      <a href="/panel/contenido/" class="accion-btn blue">🌱 Agregar personajes</a>
+      <a href="/guias/crear/" class="accion-btn green">📖 Crear guía</a>
+      <a href="/admin/" class="accion-btn red">⚙️ Django Admin</a>
+    </div>
+
+  </div>
+
+  <!-- GRID INFERIOR -->
+  <div class="panel-grid">
+
+    <!-- POSTS RECIENTES -->
+    <div class="panel-card">
+      <div class="panel-card-title">📝 Posts Recientes <a href="/panel/posts/">Ver todos →</a></div>
+      {% for post in posts_recientes %}
+      <div class="recent-item">
+        <div class="recent-avatar">
+          {% if post.autor.perfil.avatar %}
+          <img src="{{ post.autor.perfil.avatar.url }}" alt="{{ post.autor.username }}">
+          {% elif post.autor.perfil.faccion == 'planta' %}🌱
+          {% elif post.autor.perfil.faccion == 'zombie' %}🧟
+          {% else %}⚔️{% endif %}
+        </div>
+        <div class="recent-info">
+          <div class="recent-name">{{ post.titulo }}</div>
+          <div class="recent-meta">
+            por {{ post.autor.username }} • {{ post.fecha|timesince }} ago
+            • ❤️ {{ post.total_likes }}
+          </div>
+        </div>
+        <a href="/foro/post/{{ post.pk }}/" style="font-size:0.72rem;color:var(--green);text-decoration:none;font-weight:800;">Ver →</a>
+      </div>
+      {% empty %}
+      <div style="text-align:center;padding:1rem;color:var(--muted);font-size:0.85rem;">No hay posts aún</div>
+      {% endfor %}
+    </div>
+
+    <!-- USUARIOS RECIENTES -->
+    <div class="panel-card">
+      <div class="panel-card-title">👥 Usuarios Recientes <a href="/panel/usuarios/">Ver todos →</a></div>
+      {% for user in usuarios_recientes %}
+      <div class="recent-item">
+        <div class="recent-avatar">
+          {% if user.perfil.avatar %}
+          <img src="{{ user.perfil.avatar.url }}" alt="{{ user.username }}">
+          {% elif user.perfil.faccion == 'planta' %}🌱
+          {% elif user.perfil.faccion == 'zombie' %}🧟
+          {% else %}⚔️{% endif %}
+        </div>
+        <div class="recent-info">
+          <div class="recent-name">
+            {{ user.username }}
+            {% if user.is_staff %}
+            <span style="font-size:0.6rem;background:rgba(251,191,36,0.15);color:var(--yellow);padding:1px 6px;border-radius:6px;">Staff</span>
+            {% endif %}
+            {% if user.perfil.verificado %}
+            <span style="font-size:0.6rem;background:rgba(29,155,240,0.15);color:#1d9bf0;padding:1px 6px;border-radius:6px;">✓</span>
+            {% endif %}
+          </div>
+          <div class="recent-meta">{{ user.date_joined|timesince }} ago • {{ user.perfil.get_rango_display }}</div>
+        </div>
+        <span class="recent-badge {% if user.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+          {% if user.is_active %}Activo{% else %}Baneado{% endif %}
+        </span>
+      </div>
+      {% empty %}
+      <div style="text-align:center;padding:1rem;color:var(--muted);font-size:0.85rem;">No hay usuarios</div>
+      {% endfor %}
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

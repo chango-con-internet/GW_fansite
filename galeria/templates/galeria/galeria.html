@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Galería - Garden Warfare{% endblock %}
+{% block nav_galeria %}active{% endblock %}
+
+{% block extra_styles %}
+  .header { padding: 4rem 2rem 3rem; text-align: center; background: radial-gradient(ellipse 100% 60% at 50% 100%, #1a3d1a 0%, transparent 70%); }
+  .header h1 { font-family: 'Bangers', cursive; font-size: clamp(2.5rem, 6vw, 4.5rem); letter-spacing: 3px; color: #fff; text-shadow: 3px 3px 0 #1a3d1a; margin-bottom: 0.3rem; }
+  .header h1 span { color: #fbbf24; }
+  .header p { color: #66bb6a; font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .filters { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; padding: 1.5rem 2rem; }
+  .filter-btn { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; padding: 7px 20px; border-radius: 8px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.1); background: transparent; color: #aaa; transition: all 0.15s; }
+  .filter-btn:hover { border-color: #4CAF50; color: #4CAF50; }
+  .filter-btn.active { background: rgba(76,175,80,0.2); border-color: #4CAF50; color: #fff; }
+  .grid { columns: 3 280px; gap: 1rem; padding: 1rem 2rem 3rem; max-width: 1200px; margin: 0 auto; }
+  .img-card { break-inside: avoid; margin-bottom: 1rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
+  .img-card:hover { transform: translateY(-4px); border-color: #4CAF50; }
+  .img-card img { width: 100%; display: block; transition: transform 0.3s; }
+  .img-card:hover img { transform: scale(1.03); }
+  .img-info { padding: 0.8rem 1rem; }
+  .img-titulo { font-weight: 800; font-size: 0.9rem; color: #fff; margin-bottom: 0.4rem; }
+  .img-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .tag { font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 8px; }
+  .tag-gw1 { background: rgba(76,175,80,0.2); color: #86efac; }
+  .tag-gw2 { background: rgba(124,58,237,0.2); color: #c4b5fd; }
+  .tag-ambos { background: rgba(251,191,36,0.2); color: #fde68a; }
+  .tag-personaje { background: rgba(56,189,248,0.2); color: #bae6fd; }
+  .tag-mapa { background: rgba(239,68,68,0.2); color: #fca5a5; }
+  .tag-gameplay { background: rgba(34,197,94,0.2); color: #86efac; }
+  .tag-arte { background: rgba(251,191,36,0.2); color: #fde68a; }
+  .empty { text-align: center; padding: 4rem; color: #444; font-size: 1rem; }
+  .lightbox { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.92); align-items: center; justify-content: center; padding: 2rem; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 90vw; max-height: 80vh; border-radius: 12px; object-fit: contain; }
+  .lightbox-info { text-align: center; margin-top: 1rem; }
+  .lightbox-titulo { font-family: 'Bangers', cursive; font-size: 1.5rem; letter-spacing: 1px; color: #fff; }
+  .lightbox-desc { font-size: 0.85rem; color: #9ca3af; margin-top: 0.3rem; }
+  .lightbox-close { position: fixed; top: 1.5rem; right: 1.5rem; font-family: 'Bangers', cursive; font-size: 1.5rem; letter-spacing: 1px; color: #fff; cursor: pointer; background: rgba(255,255,255,0.1); border: none; padding: 6px 14px; border-radius: 8px; transition: background 0.15s; }
+  .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+  .lightbox-content { display: flex; flex-direction: column; align-items: center; }
+{% endblock %}
+
+{% block content %}
+  <div class="header">
+    <h1>GALERÍA <span>GW</span></h1>
+    <p>Imágenes de Garden Warfare 1 y 2</p>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="filtrar('todos', this)">Todos</button>
+    <button class="filter-btn" onclick="filtrar('personaje', this)">Personajes</button>
+    <button class="filter-btn" onclick="filtrar('mapa', this)">Mapas</button>
+    <button class="filter-btn" onclick="filtrar('gameplay', this)">Gameplay</button>
+    <button class="filter-btn" onclick="filtrar('arte', this)">Arte</button>
+  </div>
+
+  {% if imagenes %}
+  <div class="grid" id="grid">
+    {% for img in imagenes %}
+    <div class="img-card" data-categoria="{{ img.categoria }}" onclick="abrirLightbox('{{ img.imagen.url }}', '{{ img.titulo }}', '{{ img.descripcion }}')">
+      <img src="{{ img.imagen.url }}" alt="{{ img.titulo }}" loading="lazy">
+      <div class="img-info">
+        <div class="img-titulo">{{ img.titulo }}</div>
+        <div class="img-tags">
+          <span class="tag tag-{{ img.juego }}">{{ img.get_juego_display }}</span>
+          <span class="tag tag-{{ img.categoria }}">{{ img.get_categoria_display }}</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">No hay imágenes aún. ¡Agrégalas desde el panel admin!</div>
+  {% endif %}
+
+  <div class="lightbox" id="lightbox" onclick="cerrarLightbox()">
+    <button class="lightbox-close" onclick="cerrarLightbox()">✕ Cerrar</button>
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <img id="lightbox-img" src="" alt="">
+      <div class="lightbox-info">
+        <div class="lightbox-titulo" id="lightbox-titulo"></div>
+        <div class="lightbox-desc" id="lightbox-desc"></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function filtrar(categoria, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.img-card').forEach(c => {
+      if (categoria === 'todos' || c.dataset.categoria === categoria) {
+        c.style.display = '';
+      } else {
+        c.style.display = 'none';
+      }
+    });
+  }
+  function abrirLightbox(url, titulo, desc) {
+    document.getElementById('lightbox-img').src = url;
+    document.getElementById('lightbox-titulo').textContent = titulo;
+    document.getElementById('lightbox-desc').textContent = desc;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function cerrarLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') cerrarLightbox();
+  });
+</script>
+{% endblock %}

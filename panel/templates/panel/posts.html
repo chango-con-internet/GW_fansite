@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Posts - Panel Admin{% endblock %}
+
+{% block extra_styles %}
+.panel-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+}
+.panel-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #e5e7eb; letter-spacing: 1px; }
+.panel-title span { color: var(--green); }
+
+.panel-nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.panel-nav-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.82rem;
+  padding: 7px 14px; border-radius: 10px; text-decoration: none;
+  border: 1px solid var(--border); color: var(--muted); background: transparent; transition: all 0.15s;
+}
+.panel-nav-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.15); }
+.panel-nav-btn.active { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green); }
+
+.tabla-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+.tabla-header {
+  padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tabla-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #e5e7eb; }
+.tabla-count { font-size: 0.72rem; color: var(--muted); font-weight: 800; }
+
+table { width: 100%; border-collapse: collapse; }
+th {
+  padding: 10px 16px; text-align: left;
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+td {
+  padding: 12px 16px; font-size: 0.85rem; color: #9ca3af;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+.post-title-cell {
+  font-family: 'Fredoka One', cursive; color: #e5e7eb;
+  font-size: 0.88rem; max-width: 250px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.post-autor { display: flex; align-items: center; gap: 6px; }
+.post-autor-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2);
+  display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+}
+
+.badge {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 6px; display: inline-block;
+}
+.badge-general { background: rgba(255,255,255,0.08); color: #9ca3af; }
+.badge-estrategia { background: rgba(239,68,68,0.12); color: #fca5a5; }
+.badge-builds { background: rgba(59,130,246,0.12); color: #93c5fd; }
+.badge-humor { background: rgba(251,191,36,0.12); color: #fde68a; }
+.badge-noticias { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge-destacado { background: rgba(255,215,0,0.15); color: #FFD700; }
+
+.action-btn {
+  font-family: 'Fredoka One', cursive; font-size: 0.72rem;
+  padding: 5px 10px; border-radius: 8px; text-decoration: none;
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  transition: all 0.15s; display: inline-block; margin-right: 4px; cursor: pointer;
+}
+.action-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.2); }
+.action-btn.danger { border-color: rgba(239,68,68,0.2); color: #f87171; }
+.action-btn.danger:hover { background: rgba(239,68,68,0.1); }
+.action-btn.warning { border-color: rgba(255,215,0,0.2); color: #FFD700; }
+.action-btn.warning:hover { background: rgba(255,215,0,0.08); }
+.action-btn.success { border-color: rgba(34,197,94,0.2); color: var(--green); }
+.action-btn.success:hover { background: rgba(34,197,94,0.1); }
+
+.likes-count { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; }
+{% endblock %}
+
+{% block content %}
+<div class="panel-wrap">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title">📝 Gestionar <span>Posts</span></div>
+    </div>
+    <div class="panel-nav">
+      <a href="/panel/" class="panel-nav-btn">📊 Dashboard</a>
+      <a href="/panel/usuarios/" class="panel-nav-btn">👥 Usuarios</a>
+      <a href="/panel/posts/" class="panel-nav-btn active">📝 Posts</a>
+      <a href="/panel/contenido/" class="panel-nav-btn">🌱 Contenido</a>
+    </div>
+  </div>
+
+  <div class="tabla-card">
+    <div class="tabla-header">
+      <div class="tabla-title">Todos los posts</div>
+      <div class="tabla-count">{{ posts.count }} posts en total</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Autor</th>
+          <th>Categoría</th>
+          <th>Likes</th>
+          <th>Comentarios</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for post in posts %}
+        <tr>
+          <td>
+            <div class="post-title-cell">{{ post.titulo }}</div>
+          </td>
+          <td>
+            <div class="post-autor">
+              <div class="post-autor-avatar">
+                {% if post.autor.perfil.faccion == 'planta' %}🌱
+                {% elif post.autor.perfil.faccion == 'zombie' %}🧟
+                {% else %}⚔️{% endif %}
+              </div>
+              {{ post.autor.username }}
+            </div>
+          </td>
+          <td><span class="badge badge-{{ post.categoria }}">{{ post.get_categoria_display }}</span></td>
+          <td>
+            <div class="likes-count">❤️ {{ post.total_likes }}</div>
+          </td>
+          <td>💬 {{ post.total_comentarios }}</td>
+          <td>{{ post.fecha|date:"d/m/Y" }}</td>
+          <td>
+            <a href="/foro/post/{{ post.pk }}/" class="action-btn success">👁️ Ver</a>
+            <a href="/panel/posts/{{ post.pk }}/destacar/" class="action-btn warning">⭐ Destacar</a>
+            <a href="/panel/posts/{{ post.pk }}/eliminar/" class="action-btn danger" onclick="return confirm('¿Eliminar este post?')">🗑️ Borrar</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted);">No hay posts aún</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Guía - Garden Warfare{% endblock %}
+{% block nav_guias %}active{% endblock %}
+
+{% block extra_styles %}
+.crear-wrap { max-width: 700px; margin: 2rem auto; padding: 0 1rem; }
+
+.crear-header { margin-bottom: 1.5rem; }
+.crear-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.8rem;
+  color: #e5e7eb; letter-spacing: 1px; margin-bottom: 0.3rem;
+}
+.crear-title span { color: var(--green); }
+.crear-sub { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
+
+.crear-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 2rem;
+}
+
+.form-group { margin-bottom: 1.2rem; }
+.form-label {
+  font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+  color: var(--green); letter-spacing: 1px; display: block; margin-bottom: 6px;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%; padding: 10px 14px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  border-radius: 10px; color: #e5e7eb;
+  font-family: 'Nunito', sans-serif; font-size: 0.92rem;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: rgba(34,197,94,0.4); background: rgba(255,255,255,0.07);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
+.form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+.form-select option { background: #0d140d; }
+.char-count { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-align: right; margin-top: 4px; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
+
+.admin-badge {
+  background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 1.5rem;
+  font-size: 0.82rem; color: #fde68a; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.user-notice {
+  background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15);
+  border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 1.5rem;
+  font-size: 0.82rem; color: #86efac; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.form-actions { display: flex; gap: 10px; margin-top: 1.5rem; }
+.btn-submit {
+  flex: 1; padding: 13px;
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem; letter-spacing: 1px;
+  background: var(--green); border: none; border-radius: 12px;
+  color: #fff; cursor: pointer;
+  box-shadow: 0 6px 20px var(--green-glow); transition: all 0.2s;
+}
+.btn-submit:hover { background: var(--green-dark); transform: translateY(-2px); }
+.btn-cancel {
+  padding: 13px 20px;
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  background: transparent; border: 1px solid var(--border); border-radius: 12px;
+  color: var(--muted); text-decoration: none; text-align: center; transition: all 0.15s;
+}
+.btn-cancel:hover { border-color: rgba(255,255,255,0.15); color: #e5e7eb; }
+{% endblock %}
+
+{% block content %}
+<div class="crear-wrap">
+  <div class="crear-header">
+    <div class="crear-title">📖 Crear <span>Guía</span></div>
+    <div class="crear-sub">Comparte tu conocimiento con la comunidad</div>
+  </div>
+
+  <div class="crear-card">
+    {% if request.user.is_staff %}
+    <div class="admin-badge">⭐ Como admin tu guía se publicará inmediatamente.</div>
+    {% else %}
+    <div class="user-notice">🌱 Tu guía será revisada por un admin antes de publicarse.</div>
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label">📝 Título</label>
+        <input type="text" name="titulo" class="form-input"
+          placeholder="Dale un título a tu guía..." required maxlength="200" id="titulo-input">
+        <div class="char-count"><span id="titulo-count">0</span>/200</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">💬 Descripción corta</label>
+        <input type="text" name="descripcion" class="form-input"
+          placeholder="Resume tu guía en una frase..." required maxlength="200">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">📄 Contenido</label>
+        <textarea name="contenido" class="form-textarea"
+          placeholder="Escribe el contenido completo de tu guía..." required id="contenido-input"></textarea>
+        <div class="char-count"><span id="contenido-count">0</span> caracteres</div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">🎯 Nivel</label>
+          <select name="nivel" class="form-select">
+            <option value="principiante">🟢 Principiante</option>
+            <option value="intermedio">🟡 Intermedio</option>
+            <option value="avanzado">🔴 Avanzado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🏷️ Categoría</label>
+          <select name="categoria" class="form-select">
+            <option value="estrategia">⚔️ Estrategia</option>
+            <option value="personaje">🌱 Personaje</option>
+            <option value="modo">🎮 Modo de juego</option>
+            <option value="secretos">🔍 Secretos</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">📖 Publicar Guía</button>
+        <a href="/guias/" class="btn-cancel">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.getElementById('titulo-input').addEventListener('input', function() {
+    document.getElementById('titulo-count').textContent = this.value.length;
+  });
+  document.getElementById('contenido-input').addEventListener('input', function() {
+    document.getElementById('contenido-count').textContent = this.value.length;
+  });
+</script>
+{% endblock %}
