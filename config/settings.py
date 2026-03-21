@@ -130,3 +130,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 # ⚡ WHITENOISE (mejor manejo de estáticos)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+import dj_database_url
+
+DATABASES['default'] = dj_database_url.config(default=f"sqlite:///{BASE_DIR}/db.sqlite3")
