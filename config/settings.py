@@ -134,3 +134,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 import dj_database_url
 
 DATABASES['default'] = dj_database_url.config(default=f"sqlite:///{BASE_DIR}/db.sqlite3")
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://gw-fansite.onrender.com'
+]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
