@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
 
 class Post(models.Model):
     CATEGORIAS = [
@@ -14,11 +15,10 @@ class Post(models.Model):
         ('zombie', '🧟 Zombies'),
         ('ambos', '⚔️ Ambos'),
     ]
-
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     titulo = models.CharField(max_length=200)
     contenido = models.TextField()
-    imagen = models.ImageField(upload_to='posts/', blank=True, null=True)
+    imagen = CloudinaryField('image', blank=True, null=True)
     categoria = models.CharField(max_length=20, choices=CATEGORIAS, default='general')
     faccion = models.CharField(max_length=10, choices=FACCIONES, default='ambos')
     likes = models.ManyToManyField(User, related_name='posts_liked', blank=True)
@@ -35,15 +35,12 @@ class Post(models.Model):
     def total_comentarios(self):
         return self.comentarios.count()
 
-
 class Comentario(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comentarios')
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comentarios')
     contenido = models.TextField(max_length=500)
     fecha = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='comentarios_liked', blank=True)
-
-    # 🔥 RESPUESTAS (NUEVO)
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,

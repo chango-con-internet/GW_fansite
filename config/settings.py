@@ -89,10 +89,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# DATABASE
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR}/db.sqlite3"
+        default='postgres://gw_user:9ZHbZEHAFDpiluVz6mXp5u7minx0TbcR@dpg-d6vkh1pr0fns73cbgct0-a/gw_db_t8mp'
     )
 }
 
