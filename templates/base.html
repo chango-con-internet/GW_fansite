@@ -196,12 +196,18 @@
 }
 
     @media (max-width: 768px) {
-      .nav-center { display: none; }
-      .nav-toggle { display: flex; }
-      .nav-user-name { display: none; }
-      .nav-btn-login:not([style*="padding:7px 12px"]) { display: none; }
-      nav { padding: 0.7rem 1rem; }
-    }
+  .nav-center { display: none; }
+  .nav-toggle { display: flex; }
+  .nav-user-name { display: none; }
+  .nav-logout { display: none; }
+  .nav-panel { display: none; }
+  .nav-btn-login:not([style*="padding:7px 12px"]) { display: none; }
+  nav { padding: 0.7rem 1rem; }
+  .nav-right { gap: 4px; }
+  .nav-user { gap: 4px; }
+  .nav-user-avatar { width: 28px; height: 28px; font-size: 0.85rem; }
+  .nav-btn-login[style*="padding:7px 12px"] { padding: 6px 8px !important; font-size: 0.78rem; }
+}
 
     /* FOOTER */
     footer {
