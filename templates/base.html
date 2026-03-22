@@ -48,7 +48,6 @@
     .cursor.hovering { transform: translate(-4px, -4px) scale(1.25); }
     .cursor.clicking { transform: translate(-4px, -4px) scale(0.85); }
 
-    /* ANIMACION NOMBRE */
     @keyframes nombreBrillo {
       0%, 100% { opacity: 1; text-shadow: none; }
       50% { opacity: 0.8; text-shadow: 0 0 20px currentColor; }
@@ -100,7 +99,8 @@
       justify-content: center; font-size: 1rem;
       box-shadow: 0 0 12px var(--green-glow);
     }
-    .nav-logo span { color: var(--green); }
+    .nav-logo-text { color: #fff; }
+    .nav-logo-text span { color: var(--green); }
 
     .nav-center {
       display: flex; align-items: center; gap: 4px;
@@ -188,9 +188,7 @@
       display: flex; align-items: center; gap: 10px;
     }
     .nav-mobile .nav-link:active { background: rgba(255,255,255,0.06); }
-    .nav-mobile-divider {
-      height: 1px; background: var(--border); margin: 0.3rem 0;
-    }
+    .nav-mobile-divider { height: 1px; background: var(--border); margin: 0.3rem 0; }
     .nav-semillas-mobile {
       font-family: 'Fredoka One', cursive; font-size: 1rem;
       color: var(--yellow); padding: 14px 16px; border-radius: 12px;
@@ -204,8 +202,9 @@
       .nav-user-name { display: none; }
       .nav-logout { display: none; }
       .nav-panel { display: none; }
-      .nav-btn-login:not([style*="padding:7px 12px"]) { display: none; }
       .nav-btn-register { display: none; }
+      .nav-btn-login:not([style*="padding:7px 12px"]) { display: none; }
+      .nav-logo-text { display: none; }
       nav { padding: 0.7rem 1rem; }
       .nav-right { gap: 4px; }
       .nav-user { gap: 4px; }
@@ -222,12 +221,8 @@
       max-width: 1100px; margin: 0 auto;
       display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem;
     }
-    @media (max-width: 700px) {
-      .footer-inner { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    }
-    @media (max-width: 400px) {
-      .footer-inner { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 700px) { .footer-inner { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
+    @media (max-width: 400px) { .footer-inner { grid-template-columns: 1fr; } }
 
     .footer-logo {
       font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #fff;
@@ -288,7 +283,7 @@
   <nav>
     <a href="/" class="nav-logo">
       <div class="nav-logo-icon">🌻</div>
-      GW <span>FAN</span>
+      <span class="nav-logo-text">GW <span>FAN</span></span>
     </a>
 
     <div class="nav-center">
@@ -406,7 +401,6 @@
   </footer>
 
   <script>
-    // Cursor solo en desktop
     if (window.matchMedia('(pointer: fine)').matches) {
       const cursor = document.getElementById('cursor');
       cursor.style.display = 'block';
@@ -422,7 +416,6 @@
       });
     }
 
-    // Mobile nav toggle
     function toggleNav() {
       const nav = document.getElementById('nav-mobile');
       const btn = document.getElementById('nav-toggle-btn');
@@ -440,7 +433,6 @@
       }
     }
 
-    // Cerrar nav al hacer click en link
     document.querySelectorAll('.nav-mobile .nav-link, .nav-mobile .nav-semillas-mobile').forEach(link => {
       link.addEventListener('click', () => {
         document.getElementById('nav-mobile').classList.remove('open');
@@ -452,7 +444,6 @@
       });
     });
 
-    // Notificaciones
     {% if request.user.is_authenticated %}
     function checkNotifs() {
       fetch('/usuarios/notificaciones/count/')
