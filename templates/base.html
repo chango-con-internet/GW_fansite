@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Garden Warfare Fan Site{% endblock %}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --green: #22c55e;
@@ -18,7 +18,11 @@
       --muted: #4b5563;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @media (pointer: fine) {
+      * { cursor: none !important; }
+    }
 
     body {
       font-family: 'Nunito', sans-serif;
@@ -39,29 +43,39 @@
       position: fixed; z-index: 99999; pointer-events: none;
       transform: translate(-4px, -4px); transition: transform 0.08s ease;
       filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.6));
+      display: none;
     }
     .cursor.hovering { transform: translate(-4px, -4px) scale(1.25); }
     .cursor.clicking { transform: translate(-4px, -4px) scale(0.85); }
 
-    /* VERIFICADO AZUL - tamaño ajustado para base.html */
+    /* ANIMACION NOMBRE */
+    @keyframes nombreBrillo {
+      0%, 100% { opacity: 1; text-shadow: none; }
+      50% { opacity: 0.8; text-shadow: 0 0 20px currentColor; }
+    }
+
+    /* VERIFICADO AZUL */
     .verificado-badge {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 20px; height: 20px; /* tamaño más grande */
-      margin-left: 4px; vertical-align: middle; flex-shrink: 0;
-      position: relative; top: -1px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #1d9bf0; margin-left: 4px; vertical-align: middle; flex-shrink: 0;
+      box-shadow: 0 1px 6px rgba(29,155,240,0.5); position: relative; top: -1px;
     }
-    .verificado-badge svg { width: 20px; height: 20px; }
+    .verificado-badge svg {
+      width: 11px; height: 11px; fill: none; stroke: #fff;
+      stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round;
+    }
 
-    /* ADMIN DORADO - tamaño ajustado */
+    /* ADMIN DORADO */
     .admin-badge-icon {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 20px; height: 20px; /* tamaño más grande */
+      width: 18px; height: 18px; border-radius: 50%;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
       margin-left: 4px; vertical-align: middle; flex-shrink: 0;
-      position: relative; top: -1px;
+      box-shadow: 0 1px 6px rgba(255,165,0,0.5); position: relative; top: -1px;
     }
-    .admin-badge-icon svg { width: 20px; height: 20px; }
     .admin-badge-icon svg {
-      fill: none; stroke: #fff;
+      width: 11px; height: 11px; fill: none; stroke: #fff;
       stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round;
     }
 
@@ -70,7 +84,7 @@
       position: sticky; top: 0; z-index: 100;
       background: rgba(8,12,8,0.95);
       border-bottom: 1px solid rgba(34,197,94,0.12);
-      padding: 0.8rem 2rem;
+      padding: 0.8rem 1.5rem;
       display: flex; align-items: center; justify-content: space-between;
       backdrop-filter: blur(20px);
     }
@@ -102,7 +116,7 @@
     .nav-link:hover { background: rgba(255,255,255,0.06); color: #e5e7eb; }
     .nav-link.active { background: rgba(34,197,94,0.15); color: var(--green); }
 
-    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-right { display: flex; align-items: center; gap: 6px; }
 
     .nav-btn-login {
       font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: var(--muted);
@@ -118,7 +132,7 @@
     }
     .nav-btn-register:hover { background: var(--green-dark); transform: translateY(-1px); }
 
-    .nav-user { display: flex; align-items: center; gap: 8px; }
+    .nav-user { display: flex; align-items: center; gap: 6px; }
     .nav-user-avatar {
       width: 32px; height: 32px; border-radius: 50%;
       background: rgba(34,197,94,0.15); border: 1.5px solid rgba(34,197,94,0.4);
@@ -151,33 +165,59 @@
 
     .nav-toggle {
       display: none; flex-direction: column; gap: 5px;
-      background: none; border: none; padding: 4px;
+      background: none; border: none; padding: 4px; cursor: pointer;
     }
-    .nav-toggle span { display: block; width: 20px; height: 2px; background: var(--muted); border-radius: 2px; }
+    .nav-toggle span { display: block; width: 22px; height: 2px; background: #9ca3af; border-radius: 2px; transition: all 0.2s; }
 
     .nav-mobile {
-      display: none; flex-direction: column; gap: 4px;
-      position: absolute; top: 100%; left: 0; right: 0;
-      background: rgba(8,12,8,0.98); border-bottom: 1px solid var(--border);
-      padding: 1rem 1.5rem; z-index: 99;
-    }
-    .nav-mobile.open { display: flex; }
+  display: none; flex-direction: column; gap: 6px;
+  position: fixed; top: 57px; left: 0; right: 0; bottom: 0;
+  background: rgba(8,12,8,0.98);
+  border-top: 1px solid var(--border);
+  padding: 1rem; z-index: 99;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nav-mobile.open { display: flex; }
+.nav-mobile .nav-link {
+  font-size: 1rem; padding: 14px 16px; border-radius: 12px;
+  border: 1px solid var(--border); color: #9ca3af;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-mobile .nav-link:active { background: rgba(255,255,255,0.06); }
+.nav-mobile-divider {
+  height: 1px; background: var(--border); margin: 0.3rem 0;
+}
+.nav-semillas-mobile {
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  color: var(--yellow); padding: 14px 16px; border-radius: 12px;
+  border: 1px solid rgba(251,191,36,0.2); text-decoration: none;
+  background: rgba(251,191,36,0.06); display: flex; align-items: center; gap: 8px;
+}
 
-    @media (max-width: 700px) {
+    @media (max-width: 768px) {
       .nav-center { display: none; }
       .nav-toggle { display: flex; }
+      .nav-user-name { display: none; }
+      .nav-btn-login:not([style*="padding:7px 12px"]) { display: none; }
+      nav { padding: 0.7rem 1rem; }
     }
 
     /* FOOTER */
     footer {
       background: var(--bg2); border-top: 1px solid var(--border);
-      padding: 3rem 2rem 2rem; margin-top: 2rem;
+      padding: 3rem 1.5rem 2rem; margin-top: 2rem;
     }
     .footer-inner {
       max-width: 1100px; margin: 0 auto;
       display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem;
     }
-    @media (max-width: 700px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 700px) {
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    }
+    @media (max-width: 400px) {
+      .footer-inner { grid-template-columns: 1fr; }
+    }
 
     .footer-logo {
       font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #fff;
@@ -251,6 +291,7 @@
     <div class="nav-right">
       <a href="/buscar/" class="nav-btn-login" style="padding:7px 12px;">🔍</a>
       {% if request.user.is_authenticated %}
+      <a href="/usuarios/tienda/" class="nav-btn-login" style="padding:7px 12px;color:var(--yellow);border-color:rgba(251,191,36,0.2);">☀️ {{ request.user.perfil.semillas }}</a>
       <div class="nav-user">
         {% if request.user.is_staff %}
         <a href="/panel/" class="nav-panel">🛡️ Panel</a>
@@ -259,11 +300,6 @@
           🔔
           <span id="notif-count" style="display:none;position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:0.5rem;font-weight:800;padding:1px 4px;border-radius:10px;font-family:'Fredoka One',cursive;min-width:14px;text-align:center;"></span>
         </a>
-        <a href="/usuarios/tienda/" class="nav-btn-login" style="padding:7px 12px;" title="Tienda">☀️ {{ request.user.perfil.semillas }}</a>
-        <a href="/usuarios/mensajes/" class="nav-user-avatar" title="Mensajes" style="position:relative;">
-  💬
-  <span id="msg-count" style="display:none;position:absolute;top:-4px;right:-4px;background:#1d9bf0;color:#fff;font-size:0.5rem;font-weight:800;padding:1px 4px;border-radius:10px;font-family:'Fredoka One',cursive;min-width:14px;text-align:center;"></span>
-</a>
         <a href="/usuarios/perfil/{{ request.user.username }}/" class="nav-user-avatar" style="overflow:hidden;padding:0;">
           {% if request.user.perfil.avatar %}
           <img src="{{ request.user.perfil.avatar.url }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
@@ -274,19 +310,9 @@
         <a href="/usuarios/perfil/{{ request.user.username }}/" class="nav-user-name">
           {{ request.user.username }}
           {% if request.user.is_staff %}
-          <span class="admin-badge-icon" title="Admin">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/>
-              <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/>
-            </svg>
-          </span>
+          <span class="admin-badge-icon" title="Admin"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#FFD700" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
           {% elif request.user.perfil.verificado %}
-          <span class="verificado-badge" title="Usuario verificado">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/>
-              <path fill="#fff" d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            </svg>
-          </span>
+          <span class="verificado-badge" title="Verificado"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1d9bf0" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91C1.88 9.33 1 10.57 1 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.26 3.91.8c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.33-2.19c1.4.46 2.91.2 3.92-.81s1.26-2.52.8-3.91C21.37 14.67 22.25 13.43 22.25 12z"/><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg></span>
           {% endif %}
         </a>
         <a href="/usuarios/logout/" class="nav-logout">Salir</a>
@@ -295,7 +321,7 @@
       <a href="/usuarios/login/" class="nav-btn-login">Iniciar sesión</a>
       <a href="/usuarios/register/" class="nav-btn-register">🌱 Registrarse</a>
       {% endif %}
-      <button class="nav-toggle" onclick="document.getElementById('nav-mobile').classList.toggle('open')">
+      <button class="nav-toggle" id="nav-toggle-btn" onclick="toggleNav()">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -308,15 +334,20 @@
     <a href="/guias/" class="nav-link">📖 Guías</a>
     <a href="/galeria/" class="nav-link">🖼️ Galería</a>
     <a href="/buscar/" class="nav-link">🔍 Buscar</a>
+    <div class="nav-mobile-divider"></div>
     {% if request.user.is_authenticated %}
+    <a href="/usuarios/tienda/" class="nav-semillas-mobile">☀️ {{ request.user.perfil.semillas }} Semillas</a>
     <a href="/usuarios/notificaciones/" class="nav-link">🔔 Notificaciones</a>
+    <a href="/usuarios/mensajes/" class="nav-link">💬 Mensajes</a>
     <a href="/usuarios/perfil/{{ request.user.username }}/" class="nav-link">👤 Mi perfil</a>
+    <a href="/usuarios/clasificacion/" class="nav-link">🏆 Clasificación</a>
     {% if request.user.is_staff %}
     <a href="/panel/" class="nav-link" style="color:var(--yellow);">🛡️ Panel Admin</a>
     {% endif %}
+    <div class="nav-mobile-divider"></div>
     <a href="/usuarios/logout/" class="nav-link" style="color:#ef4444;">🚪 Salir</a>
     {% else %}
-    <a href="/usuarios/login/" class="nav-link">Iniciar sesión</a>
+    <a href="/usuarios/login/" class="nav-link">🔑 Iniciar sesión</a>
     <a href="/usuarios/register/" class="nav-link" style="color:var(--green);">🌱 Registrarse</a>
     {% endif %}
   </div>
@@ -341,11 +372,10 @@
       </div>
       <div>
         <div class="footer-col-title">Comunidad</div>
-        <a href="/usuarios/tienda/" class="footer-link">☀️ Tienda</a>
         <a href="/foro/" class="footer-link">💬 Foro</a>
         <a href="/usuarios/clasificacion/" class="footer-link">🏆 Clasificación</a>
+        <a href="/usuarios/tienda/" class="footer-link">☀️ Tienda</a>
         <a href="/usuarios/register/" class="footer-link">✨ Registrarse</a>
-        <a href="/usuarios/login/" class="footer-link">🔑 Iniciar sesión</a>
       </div>
       <div>
         <div class="footer-col-title">Facciones</div>
@@ -364,18 +394,54 @@
   </footer>
 
   <script>
-    const cursor = document.getElementById('cursor');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-    });
-    document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
-    document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
-    document.querySelectorAll('a, button, [onclick]').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
-    });
+    // Cursor solo en desktop
+    if (window.matchMedia('(pointer: fine)').matches) {
+      const cursor = document.getElementById('cursor');
+      cursor.style.display = 'block';
+      document.addEventListener('mousemove', e => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+      });
+      document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+      document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+      document.querySelectorAll('a, button, [onclick]').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+      });
+    }
 
+    function toggleNav() {
+  const nav = document.getElementById('nav-mobile');
+  const btn = document.getElementById('nav-toggle-btn');
+  const isOpen = nav.classList.toggle('open');
+  // Bloquear scroll del body cuando el menú está abierto
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+  // Animar hamburguesa
+  const spans = btn.querySelectorAll('span');
+  if (isOpen) {
+    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+    spans[1].style.opacity = '0';
+    spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+  } else {
+    spans[0].style.transform = '';
+    spans[1].style.opacity = '';
+    spans[2].style.transform = '';
+  }
+}
+
+// Cerrar nav al hacer click en link
+document.querySelectorAll('.nav-mobile .nav-link, .nav-mobile .nav-semillas-mobile').forEach(link => {
+  link.addEventListener('click', () => {
+    document.getElementById('nav-mobile').classList.remove('open');
+    document.body.style.overflow = '';
+    const btn = document.getElementById('nav-toggle-btn');
+    btn.querySelectorAll('span').forEach(s => {
+      s.style.transform = ''; s.style.opacity = '';
+    });
+  });
+});
+
+    // Notificaciones
     {% if request.user.is_authenticated %}
     function checkNotifs() {
       fetch('/usuarios/notificaciones/count/')
@@ -390,19 +456,6 @@
     }
     checkNotifs();
     setInterval(checkNotifs, 30000);
-    function checkMsgs() {
-  fetch('/usuarios/mensajes/count/')
-    .then(r => r.json())
-    .then(data => {
-      const badge = document.getElementById('msg-count');
-      if (badge) {
-        if (data.count > 0) { badge.textContent = data.count; badge.style.display = 'block'; }
-        else { badge.style.display = 'none'; }
-      }
-    }).catch(() => {});
-}
-checkMsgs();
-setInterval(checkMsgs, 30000);
     {% endif %}
   </script>
 

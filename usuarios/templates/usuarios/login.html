@@ -9,7 +9,7 @@
 .login-wrap {
   min-height: 100vh;
   display: flex; align-items: center; justify-content: center;
-  padding: 2rem; position: relative; overflow: hidden;
+  padding: 2rem 1rem; position: relative; overflow: hidden;
 }
 
 .login-wrap::before {
@@ -27,9 +27,12 @@
   border-radius: 24px; overflow: hidden;
   box-shadow: 0 40px 100px rgba(0,0,0,0.5);
 }
+
 @media (max-width: 700px) {
-  .login-inner { grid-template-columns: 1fr; }
+  .login-inner { grid-template-columns: 1fr; border-radius: 16px; }
   .login-deco { display: none; }
+  .login-form-side { padding: 2rem 1.5rem; }
+  .login-wrap { padding: 1rem; align-items: flex-start; padding-top: 2rem; min-height: 100svh; }
 }
 
 /* LADO DECORATIVO */
@@ -101,11 +104,12 @@
   color: #9ca3af; letter-spacing: 0.5px; display: block; margin-bottom: 6px;
 }
 .form-input {
-  width: 100%; padding: 11px 14px;
+  width: 100%; padding: 12px 14px;
   background: rgba(255,255,255,0.05); border: 1px solid var(--border);
   border-radius: 10px; color: #e5e7eb;
-  font-family: 'Nunito', sans-serif; font-size: 0.92rem;
+  font-family: 'Nunito', sans-serif; font-size: 1rem;
   outline: none; transition: all 0.2s;
+  -webkit-appearance: none;
 }
 .form-input:focus {
   border-color: rgba(34,197,94,0.4);
@@ -115,14 +119,14 @@
 .form-input::placeholder { color: #374151; }
 
 .btn-submit {
-  width: 100%; padding: 13px;
+  width: 100%; padding: 14px;
   font-family: 'Fredoka One', cursive; font-size: 1.1rem; letter-spacing: 1px;
   background: var(--green); border: none; border-radius: 12px;
   color: #fff; cursor: pointer;
   box-shadow: 0 6px 20px var(--green-glow); transition: all 0.2s;
-  margin-top: 0.5rem;
+  margin-top: 0.5rem; -webkit-appearance: none;
 }
-.btn-submit:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 28px var(--green-glow); }
+.btn-submit:hover { background: var(--green-dark); transform: translateY(-2px); }
 .btn-submit:active { transform: translateY(1px); }
 
 .divider {
@@ -134,7 +138,7 @@
 }
 
 .btn-register {
-  display: block; width: 100%; padding: 12px;
+  display: block; width: 100%; padding: 13px;
   font-family: 'Fredoka One', cursive; font-size: 1rem; letter-spacing: 1px;
   background: transparent; border: 1px solid var(--border); border-radius: 12px;
   color: var(--muted); text-decoration: none; text-align: center; transition: all 0.2s;
@@ -184,10 +188,10 @@
             </div>
           </div>
           <div class="deco-feature">
-            <div class="deco-feature-icon blue">⚔️</div>
+            <div class="deco-feature-icon blue">☀️</div>
             <div>
-              <div class="deco-feature-title">Elige tu facción</div>
-              <div class="deco-feature-text">Plantas o Zombies</div>
+              <div class="deco-feature-title">Gana semillas</div>
+              <div class="deco-feature-text">Canjéalas por cosméticos</div>
             </div>
           </div>
         </div>
@@ -211,11 +215,15 @@
         {% csrf_token %}
         <div class="form-group">
           <label class="form-label">👤 Usuario</label>
-          <input type="text" name="username" class="form-input" placeholder="Tu nombre de usuario" required autofocus>
+          <input type="text" name="username" class="form-input"
+            placeholder="Tu nombre de usuario" required autofocus
+            autocomplete="username">
         </div>
         <div class="form-group">
           <label class="form-label">🔒 Contraseña</label>
-          <input type="password" name="password" class="form-input" placeholder="Tu contraseña" required>
+          <input type="password" name="password" class="form-input"
+            placeholder="Tu contraseña" required
+            autocomplete="current-password">
         </div>
         <button type="submit" class="btn-submit">🌱 Entrar al jardín</button>
       </form>

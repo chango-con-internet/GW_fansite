@@ -9,7 +9,7 @@
 .register-wrap {
   min-height: 100vh;
   display: flex; align-items: center; justify-content: center;
-  padding: 2rem; position: relative; overflow: hidden;
+  padding: 2rem 1rem; position: relative; overflow: hidden;
 }
 
 .register-wrap::before {
@@ -27,11 +27,19 @@
   border-radius: 24px; overflow: hidden;
   box-shadow: 0 40px 100px rgba(0,0,0,0.5);
 }
+
 @media (max-width: 700px) {
-  .register-inner { grid-template-columns: 1fr; }
+  .register-inner { grid-template-columns: 1fr; border-radius: 16px; }
   .register-deco { display: none; }
+  .register-form-side { padding: 2rem 1.5rem; }
+  .register-wrap { padding: 1rem; align-items: flex-start; padding-top: 2rem; min-height: 100svh; }
+  .faccion-grid { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .faccion-emoji { font-size: 1.4rem; }
+  .faccion-label { font-size: 0.7rem; }
+  .faccion-desc { display: none; }
 }
 
+/* FORMULARIO */
 .register-form-side { padding: 3rem 2.5rem; overflow-y: auto; }
 
 .form-header { margin-bottom: 1.8rem; }
@@ -48,11 +56,11 @@
   color: #9ca3af; letter-spacing: 0.5px; display: block; margin-bottom: 6px;
 }
 .form-input {
-  width: 100%; padding: 11px 14px;
+  width: 100%; padding: 12px 14px;
   background: rgba(255,255,255,0.05); border: 1px solid var(--border);
   border-radius: 10px; color: #e5e7eb;
-  font-family: 'Nunito', sans-serif; font-size: 0.92rem;
-  outline: none; transition: all 0.2s;
+  font-family: 'Nunito', sans-serif; font-size: 1rem;
+  outline: none; transition: all 0.2s; -webkit-appearance: none;
 }
 .form-input:focus {
   border-color: rgba(168,85,247,0.4);
@@ -61,6 +69,7 @@
 }
 .form-input::placeholder { color: #374151; }
 
+/* FACCION */
 .faccion-title {
   font-family: 'Fredoka One', cursive; font-size: 0.82rem;
   color: #9ca3af; margin-bottom: 8px; letter-spacing: 0.5px;
@@ -76,18 +85,19 @@
 .faccion-opt:has(input:checked).zombie { border-color: #a855f7; background: rgba(168,85,247,0.12); }
 .faccion-opt:has(input:checked).neutral { border-color: var(--yellow); background: rgba(251,191,36,0.12); }
 .faccion-emoji { font-size: 1.8rem; display: block; margin-bottom: 5px; }
-.faccion-label { font-family: 'Fredoka One', cursive; font-size: 0.78rem; color: #6b7280; }
-.faccion-desc { font-size: 0.65rem; color: #374151; margin-top: 2px; }
+.faccion-label { font-family: 'Fredoka One', cursive; font-size: 0.78rem; color: #6b7280; display: block; }
+.faccion-desc { font-size: 0.65rem; color: #374151; margin-top: 2px; display: block; }
 .faccion-opt:has(input:checked).plant .faccion-label { color: var(--green); }
 .faccion-opt:has(input:checked).zombie .faccion-label { color: #a855f7; }
 .faccion-opt:has(input:checked).neutral .faccion-label { color: var(--yellow); }
 
 .btn-submit {
-  width: 100%; padding: 13px;
+  width: 100%; padding: 14px;
   font-family: 'Fredoka One', cursive; font-size: 1.1rem; letter-spacing: 1px;
   background: #a855f7; border: none; border-radius: 12px;
   color: #fff; cursor: pointer;
-  box-shadow: 0 6px 20px rgba(168,85,247,0.3); transition: all 0.2s; margin-top: 0.5rem;
+  box-shadow: 0 6px 20px rgba(168,85,247,0.3); transition: all 0.2s;
+  margin-top: 0.5rem; -webkit-appearance: none;
 }
 .btn-submit:hover { background: #9333ea; transform: translateY(-2px); }
 .btn-submit:active { transform: translateY(1px); }
@@ -99,7 +109,7 @@
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
 .btn-login {
-  display: block; width: 100%; padding: 12px;
+  display: block; width: 100%; padding: 13px;
   font-family: 'Fredoka One', cursive; font-size: 1rem; letter-spacing: 1px;
   background: transparent; border: 1px solid var(--border); border-radius: 12px;
   color: var(--muted); text-decoration: none; text-align: center; transition: all 0.2s;
@@ -113,6 +123,7 @@
   display: flex; align-items: center; gap: 6px;
 }
 
+/* LADO DECORATIVO */
 .register-deco {
   background: linear-gradient(135deg, #1a0d2d, #2d1a4d, #1a0d2d);
   padding: 3rem 2rem; display: flex; flex-direction: column;
@@ -150,7 +161,7 @@
 .rango-item:hover { background: rgba(255,255,255,0.07); }
 .rango-icon { font-size: 1.3rem; flex-shrink: 0; }
 .rango-info { flex: 1; }
-.rango-name { font-family: 'Fredoka One', cursive; font-size: 0.88rem; color: #e5e7eb; letter-spacing: 0.5px; }
+.rango-name { font-family: 'Fredoka One', cursive; font-size: 0.88rem; color: #e5e7eb; }
 .rango-req { font-size: 0.7rem; color: #4b5563; font-weight: 800; }
 .rango-badge {
   font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;
@@ -163,6 +174,7 @@
 <div class="register-wrap">
   <div class="register-inner">
 
+    <!-- FORMULARIO -->
     <div class="register-form-side">
       <div class="form-header">
         <div class="form-title">Únete al <span>jardín</span></div>
@@ -179,19 +191,26 @@
         {% csrf_token %}
         <div class="form-group">
           <label class="form-label">👤 Nombre de usuario</label>
-          <input type="text" name="username" class="form-input" placeholder="Tu nombre de guerrero" required autofocus>
+          <input type="text" name="username" class="form-input"
+            placeholder="Tu nombre de guerrero" required autofocus
+            autocomplete="username">
         </div>
         <div class="form-group">
           <label class="form-label">📧 Email</label>
-          <input type="email" name="email" class="form-input" placeholder="tu@email.com">
+          <input type="email" name="email" class="form-input"
+            placeholder="tu@email.com" autocomplete="email">
         </div>
         <div class="form-group">
           <label class="form-label">🔒 Contraseña</label>
-          <input type="password" name="password1" class="form-input" placeholder="Mínimo 8 caracteres" required>
+          <input type="password" name="password1" class="form-input"
+            placeholder="Mínimo 8 caracteres" required
+            autocomplete="new-password">
         </div>
         <div class="form-group">
           <label class="form-label">🔒 Confirmar contraseña</label>
-          <input type="password" name="password2" class="form-input" placeholder="Repite la contraseña" required>
+          <input type="password" name="password2" class="form-input"
+            placeholder="Repite la contraseña" required
+            autocomplete="new-password">
         </div>
 
         <div class="faccion-title">⚔️ Elige tu facción</div>
@@ -223,6 +242,7 @@
       <a href="/usuarios/login/" class="btn-login">🌱 Iniciar sesión</a>
     </div>
 
+    <!-- DECORATIVO -->
     <div class="register-deco">
       <div class="deco-content">
         <div class="deco-title">Sube de <span>rango</span><br>y domina</div>
@@ -248,14 +268,14 @@
             <span class="rango-icon">⚔️</span>
             <div class="rango-info">
               <div class="rango-name">Guerrero</div>
-              <div class="rango-req">10+ posts publicados</div>
+              <div class="rango-req">50 posts + 100 likes</div>
             </div>
           </div>
           <div class="rango-item">
             <span class="rango-icon">🌻</span>
             <div class="rango-info">
               <div class="rango-name">Girasol</div>
-              <div class="rango-req">3+ posts publicados</div>
+              <div class="rango-req">15 posts + 30 likes</div>
             </div>
           </div>
           <div class="rango-item">
