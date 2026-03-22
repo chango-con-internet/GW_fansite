@@ -178,6 +178,50 @@
 .empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; opacity: 0.5; }
 .empty-text { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #e5e7eb; margin-bottom: 0.3rem; }
 .empty-sub { font-size: 0.82rem; color: var(--muted); }
+
+@media (max-width: 600px) {
+  .perfil-wrap { padding: 0.8rem 0.8rem; }
+
+  .perfil-banner { height: 80px; }
+
+  .perfil-info {
+    padding: 0 1rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .perfil-avatar-wrap { margin-top: -40px; }
+
+  .perfil-avatar { width: 75px; height: 75px; font-size: 2rem; border-width: 3px; }
+
+  .perfil-username { font-size: 1.3rem; }
+
+  .perfil-badges { gap: 4px; }
+  .perfil-badge { font-size: 0.6rem; padding: 2px 8px; }
+
+  .perfil-actions {
+    flex-direction: row; flex-wrap: wrap; gap: 6px; padding-top: 0;
+    width: 100%;
+  }
+  .btn-editar { font-size: 0.75rem; padding: 6px 12px; }
+
+  .xp-section { flex-direction: column; gap: 0.8rem; padding: 0.8rem; }
+  .xp-nivel { min-width: unset; width: 100%; display: flex; align-items: center; gap: 10px; padding: 0.5rem 0.8rem; }
+  .xp-nivel > div:first-child { font-size: 1rem; }
+  .xp-nivel > div:nth-child(2) { font-size: 1.5rem; }
+
+  .perfil-stats { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+  .stat-num { font-size: 1.4rem; }
+  .stat-label { font-size: 0.62rem; }
+
+  .medallas-mini { padding: 0.8rem; }
+  .medalla-chip { width: 38px; height: 38px; font-size: 1.2rem; }
+
+  .section-title { font-size: 0.9rem; }
+  .post-card { padding: 0.9rem; }
+  .post-titulo { font-size: 0.92rem; }
+}
 {% endblock %}
 
 {% block content %}
