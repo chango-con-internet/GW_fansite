@@ -6,9 +6,16 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 .conv-page {
-  height: calc(100vh - 60px);
+  height: calc(100vh - 57px);
   display: flex; flex-direction: column;
   max-width: 900px; margin: 0 auto; padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .conv-page {
+    height: calc(100vh - 57px);
+    padding: 0.5rem;
+  }
 }
 
 /* HEADER */
@@ -26,18 +33,19 @@
 }
 .conv-header-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .conv-header-avatar.zombie { border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.12); }
-.conv-header-info { flex: 1; }
+.conv-header-info { flex: 1; min-width: 0; }
 .conv-header-name {
   font-family: 'Fredoka One', cursive; font-size: 1rem;
   color: #e5e7eb; display: flex; align-items: center; gap: 5px;
-  text-decoration: none;
+  text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .conv-header-name:hover { color: var(--green); }
 .conv-header-sub { font-size: 0.72rem; color: var(--muted); font-weight: 700; margin-top: 1px; }
 .back-btn {
   font-family: 'Fredoka One', cursive; font-size: 0.78rem;
   color: var(--muted); text-decoration: none; padding: 6px 12px;
-  border-radius: 8px; border: 1px solid var(--border); transition: all 0.15s; flex-shrink: 0;
+  border-radius: 8px; border: 1px solid var(--border); transition: all 0.15s;
+  flex-shrink: 0; white-space: nowrap;
 }
 .back-btn:hover { color: #e5e7eb; border-color: rgba(255,255,255,0.15); }
 
@@ -47,13 +55,14 @@
   background: var(--bg2);
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
-  padding: 1.2rem;
+  padding: 1rem;
   overflow-y: auto;
   display: flex; flex-direction: column; gap: 6px;
   background-image:
     linear-gradient(rgba(34,197,94,0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(34,197,94,0.02) 1px, transparent 1px);
   background-size: 30px 30px;
+  overscroll-behavior: contain;
 }
 .mensajes-box::-webkit-scrollbar { width: 4px; }
 .mensajes-box::-webkit-scrollbar-track { background: transparent; }
@@ -62,29 +71,38 @@
 /* MENSAJES */
 .msg-row {
   display: flex; gap: 8px; align-items: flex-end;
-  max-width: 72%; margin-bottom: 2px;
+  max-width: 80%;
 }
 .msg-row.sent { flex-direction: row-reverse; margin-left: auto; }
 .msg-row.received { margin-right: auto; }
 
+@media (max-width: 768px) {
+  .msg-row { max-width: 88%; }
+}
+
 .msg-avatar {
-  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
   background: rgba(34,197,94,0.12); border: 1.5px solid rgba(34,197,94,0.3);
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.85rem; overflow: hidden; padding: 0;
+  font-size: 0.8rem; overflow: hidden; padding: 0;
+  align-self: flex-end; margin-bottom: 18px;
 }
 .msg-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-.msg-content { display: flex; flex-direction: column; max-width: 100%; }
+.msg-content {
+  display: flex; flex-direction: column;
+  max-width: calc(100% - 40px);
+  min-width: 0;
+}
 .msg-row.sent .msg-content { align-items: flex-end; }
 .msg-row.received .msg-content { align-items: flex-start; }
 
 .msg-bubble {
-  padding: 9px 14px; border-radius: 14px;
+  padding: 9px 13px; border-radius: 14px;
   font-size: 0.9rem; line-height: 1.55;
   word-wrap: break-word; overflow-wrap: break-word;
   word-break: break-word; white-space: pre-wrap;
-  max-width: 100%;
+  max-width: 100%; min-width: 0;
 }
 .msg-row.received .msg-bubble {
   background: rgba(255,255,255,0.07); color: #e5e7eb;
@@ -97,8 +115,8 @@
   border-radius: 14px 4px 14px 14px;
 }
 .msg-time {
-  font-size: 0.62rem; color: var(--muted); font-weight: 700; margin-top: 3px;
-  padding: 0 4px;
+  font-size: 0.62rem; color: var(--muted); font-weight: 700;
+  margin-top: 3px; padding: 0 4px;
 }
 
 /* FECHA SEPARADOR */
@@ -116,7 +134,7 @@
 .empty-msgs {
   flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  color: var(--muted); gap: 8px;
+  color: var(--muted); gap: 8px; padding: 2rem;
 }
 .empty-msgs-icon { font-size: 3rem; opacity: 0.4; }
 .empty-msgs-text { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #e5e7eb; }
@@ -128,24 +146,38 @@
   border-radius: 0 0 16px 16px; padding: 0.8rem 1rem;
   flex-shrink: 0;
 }
-.msg-input-row { display: flex; gap: 8px; align-items: flex-end; }
+.msg-input-row {
+  display: flex; gap: 8px; align-items: flex-end;
+}
 .msg-textarea {
   flex: 1; padding: 10px 14px; border-radius: 12px;
   background: rgba(255,255,255,0.05); border: 1px solid var(--border);
   color: #e5e7eb; font-family: 'Nunito', sans-serif; font-size: 0.92rem;
   outline: none; resize: none; min-height: 44px; max-height: 120px;
   line-height: 1.5; transition: border-color 0.2s;
+  -webkit-appearance: none;
 }
 .msg-textarea:focus { border-color: rgba(34,197,94,0.3); }
 .msg-textarea::placeholder { color: var(--muted); }
+
 .msg-send {
-  padding: 10px 20px; border-radius: 12px; height: 44px;
+  padding: 10px 16px; border-radius: 12px; height: 44px;
   font-family: 'Fredoka One', cursive; font-size: 0.9rem; letter-spacing: 0.5px;
   background: var(--green); border: none; color: #fff; cursor: pointer;
   box-shadow: 0 4px 12px var(--green-glow); transition: all 0.2s;
   flex-shrink: 0; white-space: nowrap;
 }
-.msg-send:hover { background: var(--green-dark); transform: translateY(-1px); }
+.msg-send:hover { background: var(--green-dark); }
+.msg-send:active { transform: scale(0.97); }
+
+@media (max-width: 768px) {
+  .msg-form { padding: 0.6rem 0.8rem; border-radius: 0 0 12px 12px; }
+  .msg-textarea { font-size: 1rem; padding: 10px 12px; }
+  .msg-send { padding: 10px 14px; font-size: 0.85rem; }
+  .conv-header { padding: 0.7rem 1rem; border-radius: 12px 12px 0 0; }
+  .conv-header-avatar { width: 38px; height: 38px; }
+  .mensajes-box { padding: 0.8rem; }
+}
 {% endblock %}
 
 {% block content %}
@@ -187,7 +219,8 @@
   <div class="mensajes-box" id="mensajes-box">
     {% if mensajes %}
       {% for msg in mensajes %}
-      <div class="msg-row {% if msg.remitente == request.user %}sent{% else %}received{% endif %}">
+      <div class="msg-row {% if msg.remitente == request.user %}sent{% else %}received{% endif %}"
+        id="msg-{{ msg.id }}">
         <div class="msg-avatar">
           {% if msg.remitente.perfil.avatar %}
           <img src="{{ msg.remitente.perfil.avatar.url }}" alt="{{ msg.remitente.username }}">
@@ -231,15 +264,37 @@
   const box = document.getElementById('mensajes-box');
   if (box) box.scrollTop = box.scrollHeight;
 
+  // Auto-resize textarea
+  const textarea = document.getElementById('msg-input');
+  if (textarea) {
+    textarea.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+  }
+
   let ultimoId = {{ mensajes.last.id|default:0 }};
 
   function agregarMensaje(msg) {
+    // Eliminar empty state si existe
+    const empty = box.querySelector('.empty-msgs');
+    if (empty) empty.remove();
+
     const row = document.createElement('div');
     row.className = `msg-row ${msg.soy_yo ? 'sent' : 'received'}`;
+    row.id = `msg-${msg.id}`;
+
+    // Escapar HTML
+    const contenido = msg.contenido
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\n/g, '<br>');
+
     row.innerHTML = `
       <div class="msg-avatar">${msg.avatar_emoji}</div>
       <div class="msg-content">
-        <div class="msg-bubble">${msg.contenido}</div>
+        <div class="msg-bubble">${contenido}</div>
         <div class="msg-time">${msg.fecha}</div>
       </div>
     `;
@@ -268,10 +323,12 @@
           soy_yo: true,
           contenido: contenido,
           fecha: data.fecha,
-          avatar_emoji: data.mi_avatar
+          avatar_emoji: data.mi_avatar,
+          id: data.id
         });
         ultimoId = data.id;
         input.value = '';
+        input.style.height = 'auto';
       }
     }).catch(() => {
       document.getElementById('msg-form').submit();
@@ -283,7 +340,11 @@
       .then(r => r.json())
       .then(data => {
         if (data.mensajes && data.mensajes.length > 0) {
-          data.mensajes.forEach(msg => agregarMensaje(msg));
+          data.mensajes.forEach(msg => {
+            if (!document.getElementById(`msg-${msg.id}`)) {
+              agregarMensaje(msg);
+            }
+          });
           ultimoId = data.mensajes[data.mensajes.length - 1].id;
         }
       }).catch(() => {});
